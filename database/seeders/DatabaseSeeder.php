@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
             VehicleCategorySeeder::class,
             VehicleBrandSeeder::class,
             VehicleSeeder::class,
+            BookingStatusSeeder::class,
+            PaymentStatusSeeder::class,
+            UnitSeeder::class,
+            FeatureSeeder::class,
+            VehicleFeatureSeeder::class,
         ]);
     }
 }

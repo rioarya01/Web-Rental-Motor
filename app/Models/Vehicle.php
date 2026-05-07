@@ -53,4 +53,9 @@ class Vehicle extends Model
     {
         return $this->belongsTo(VehicleBrand::class, 'brand_id');
     }
+
+    public function features()
+    {
+        return $this->belongsToMany(Feature::class, 'vehicle_features');
+    }
 }
