@@ -20,13 +20,13 @@ class LoginController extends Controller
         // dd($request->all());
 
         $request->validate([
-            'username' => 'required',
+            'email' => 'required',
             'password' => 'required'
         ]);
 
-        $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        // $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $credentials = [
-            $loginType => $request->username,
+            'email' => $request->email,
             'password' => $request->password
         ];
 

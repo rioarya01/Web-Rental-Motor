@@ -17,14 +17,12 @@ class RegisterController extends Controller
     public function register_proses(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'username' => 'required',
+            'no_telp' => 'required|unique:users,no_telp',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:5'
         ]);
         $data = [
-            'name' => $request->name,
-            'username' => $request->username,
+            'no_telp' => $request->no_telp,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ];

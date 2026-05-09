@@ -69,39 +69,44 @@
                                         @csrf
                                         <div class="row g-3 needs-validation" novalidate>
                                             <div class="col-12 mt-5">
-                                                <label for="yourName" class="form-label">Name</label>
-                                                <input type="text" name="name" class="form-control"
-                                                    value="{{ old('name') }}">
-                                                @error('name')
-                                                    <small>{{ $message }} </small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="col-12">
-                                                <label for="yourUsername" class="form-label">Username</label>
+                                                <label for="yournumber" class="form-label">No Telepon</label>
                                                 <div class="input-group has-validation">
-                                                    {{-- <span class="input-group-text" id="inputGroupPrepend">@</span> --}}
-                                                    <input type="text" name="username"
-                                                        class="form-control"value="{{ old('username') }}">
+                                                    <div class="input-group-text" id="inputGroupPrepend">
+                                                        <span class="bi-telephone"></span>
+                                                    </div>
+                                                    <input type="text" name="no_telp" class="form-control"
+                                                        value="{{ old('no_telp') }}">
+                                                    <div class="invalid-feedback">Please enter your number!</div>
                                                 </div>
-                                                @error('username')
+                                                @error('no_telp')
                                                     <small>{{ $message }} </small>
                                                 @enderror
                                             </div>
 
                                             <div class="col-12">
                                                 <label for="yourEmail" class="form-label">Email</label>
-                                                <input type="email" name="email"
-                                                    class="form-control"value="{{ old('email') }}">
+                                                <div class="input-group has-validation">
+                                                    <div class="input-group-text" id="inputGroupPrepend">
+                                                        <span class="bi-envelope"></span>
+                                                    </div>
+                                                    <input type="email" name="email" class="form-control"
+                                                        value="{{ old('email') }}">
+                                                    <div class="invalid-feedback">Please enter your email.</div>
+                                                </div>
                                                 @error('email')
                                                     <small>{{ $message }} </small>
                                                 @enderror
                                             </div>
 
-
                                             <div class="col-12">
                                                 <label for="yourPassword" class="form-label">Password</label>
-                                                <input type="password" name="password" class="form-control">
+                                                <div class="input-group has-validation">
+                                                    <div class="input-group-text" id="inputGroupPrepend">
+                                                        <span class="bi-key"></span>
+                                                    </div>
+                                                    <input type="password" name="password" class="form-control">
+                                                    <div class="invalid-feedback">Please enter your password!</div>
+                                                </div>
                                                 @error('password')
                                                     <small>{{ $message }} </small>
                                                 @enderror
