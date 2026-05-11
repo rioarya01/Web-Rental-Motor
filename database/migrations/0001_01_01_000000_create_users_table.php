@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username')->unique()->nullable();
             $table->string('no_telp', 20)->unique()->nullable();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->now();
+            $table->timestamp('email_verified_at')->timezone('Asia/Jakarta')->nullable();
             $table->string('password');
             $table->string('role')->default('user');
             $table->string('whatsapp', 20)->nullable();
@@ -32,7 +32,7 @@ return new class extends Migration
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamp('created_at');
         });
 
         Schema::create('sessions', function (Blueprint $table) {

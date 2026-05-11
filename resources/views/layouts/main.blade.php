@@ -31,8 +31,10 @@
     <!-- Template Main CSS File -->
     <link href="{{ asset('nice/assets/css/style.css') }}" rel="stylesheet">
     <!-- Bootstrap 5 CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    @if (auth()->user()->role == 'user')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    @endif
     <!-- =======================================================
   * Template Name: NiceAdmin
   * Updated: Sep 18 2023 with Bootstrap v5.3.2
@@ -44,10 +46,22 @@
 
 <body class="hold-transition layout-top-nav">
 
-    @include('layouts.topbar')
-    {{-- @include('layouts.sidebar') --}}
+    @if (auth()->user()->role == 'user')
+        @include('layouts.topbarUser')
+    @endif
+    @if (auth()->user()->role == 'admin')
+        @include('layouts.topbarAdmin')
+    @endif
+    @if (auth()->user()->role == 'admin')
+        @include('layouts.sidebar')
+    @endif
     @yield('content')
-    @include('layouts.footer')
+    @if (auth()->user()->role == 'admin')
+        @include('layouts.footerAdmin')
+    @endif
+    @if (auth()->user()->role == 'user')
+        @include('layouts.footerUser')
+    @endif
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>

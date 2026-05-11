@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\VehicleController;
@@ -21,10 +22,10 @@ Route::post('/register-proses', [RegisterController::class, 'register_proses'])-
 
 Route::middleware('admin')->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('home.admin');
+    Route::get('admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
-    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
 });
 
 
