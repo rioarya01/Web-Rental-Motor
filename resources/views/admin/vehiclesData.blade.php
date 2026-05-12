@@ -17,8 +17,16 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Tabel Data Kendaraan</h5>
+                            @if ($message = Session::get('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    {{ $message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
                             <div class="mb-4">
-                                <button class="btn btn-primary btn-action" data-toggle="" data-target="#">
+                                <button class="btn btn-primary btn-action" data-toggle="modal" data-target="#addModal">
                                     <i class="bi bi-plus"></i> Tambah Data
                                 </button>
                             </div>
@@ -67,7 +75,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                     <div class="col-md-4 mb-3">
                                         <input type="text" name="search" class="form-control"
                                             placeholder="Cari Kendaraan..." value="{{ request('search') }}"
@@ -174,4 +181,120 @@
                 </div>
         </section>
     </main>
+
+    {{-- add modal --}}
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('vehicles-data.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label>Tipe</label>
+
+                                <select name="category_id" class="form-control">
+                                    <option value="">--Pilih--</option>
+                                    @foreach ($category as $c)
+                                        <option value="{{ $c->id }}">
+                                            {{ $c->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Merk</label>
+
+                                <select name="brand_id" class="form-control">
+                                    <option value="">--Pilih--</option>
+
+                                    @foreach ($brands as $b)
+                                        <option value="{{ $b->id }}">
+                                            {{ $b->name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Code</label>
+
+                                <input type="text" name="code" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Nama</label>
+
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Plate Number</label>
+
+                                <input type="text" name="plate_number" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Fuel Tank Capacity</label>
+
+                                <input type="number" step="0.01" name="fuel_tank_capacity" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Price Per Day</label>
+
+                                <input type="number" name="price_per_day" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Status</label>
+
+                                <select name="operational_status" class="form-control">
+                                    <option value="">--Pilih--</option>
+
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="maintenance">Maintenance</option>
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label>Description</label>
+
+                                <textarea name="description" class="form-control" rows="4"></textarea>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label>Image</label>
+                                <input type="file" name="image" class="form-control">
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input type="checkbox" name="is_featured" class="form-check-input" value="1">
+                                    <label class="form-check-label">
+                                        Featured
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- End Basic Modal-->
 @endsection

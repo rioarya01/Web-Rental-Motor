@@ -4,9 +4,9 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\VehiclesController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -23,11 +23,14 @@ Route::post('/register-proses', [RegisterController::class, 'register_proses'])-
 Route::middleware('admin')->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('home.admin');
     Route::get('admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
+    Route::post('admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
+    Route::put('admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
+    Route::delete('admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
-    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
-    Route::get('/vehicle-detail/{slug}', [VehicleController::class, 'show'])->name('vehicle.detail');
+    Route::get('/vehicles', [VehiclesController::class, 'index'])->name('vehicles.index');
+    Route::get('/vehicle-detail/{slug}', [VehiclesController::class, 'show'])->name('vehicle.detail');
 });
 
 

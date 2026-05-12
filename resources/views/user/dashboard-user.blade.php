@@ -83,6 +83,7 @@
                                 <input type="number" name="max_price" class="form-control" placeholder="Max Price"
                                     value="{{ request('max_price') }}">
                             </div>
+
                             <div class="col-md-1 mb-3 d-grid">
                                 <button type="submit" class="btn btn-primary">
                                     Filter
