@@ -138,10 +138,9 @@
                                             </p>
 
                                             <div class="d-flex gap-2">
-                                                <a href="" class="btn btn-primary btn-sm">View Details</a>
+                                                <a href="{{ route('vehicle.detail', $vehicle->slug) }}" class="btn btn-primary btn-sm">View Details</a>
                                                 <button class="btn btn-success btn-sm">Booking</button>
                                             </div>
-
                                         </div>
                                     </div>
 
