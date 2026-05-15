@@ -110,7 +110,7 @@
 {{-- Heading --}}
 <section class="container" style="margin-top: 150px;">
     {{-- Heading --}}
-    <div class="mx-3 mx-md-0">
+    <div>
         <h2 class="text-2xl font-bold tracking-tight text-gray-900">
             Detail Kendaraan
         </h2>
