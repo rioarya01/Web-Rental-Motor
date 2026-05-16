@@ -22,10 +22,10 @@ Route::post('/register-proses', [RegisterController::class, 'register_proses'])-
 
 Route::middleware('admin')->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('home.admin');
-    Route::get('admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
-    Route::post('admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
-    Route::put('admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
-    Route::delete('admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
+    Route::get('/admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
+    Route::post('/admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
+    Route::put('/admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
+    Route::delete('/admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');

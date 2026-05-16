@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->enum('operational_status', ['active', 'inactive', 'maintenance'])
                 ->default('active');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

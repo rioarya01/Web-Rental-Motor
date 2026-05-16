@@ -60,41 +60,37 @@
                             <div class="card mb-3">
 
                                 <div class="card-body">
-                                    <!-- Alert Messages -->
-                                    @if ($message = Session::get('success'))
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>Berhasil!</strong> {{ $message }}
-                                            <button type="button" class="close" data-dismiss="alert"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endif
-
-                                    @if ($message = Session::get('error'))
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                            <strong>Error!</strong> {{ $message }}
-                                            <button type="button" class="close" data-dismiss="alert"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endif
                                     <div class="pt-4 pb-2">
                                         <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
                                         <p class="text-center small">Enter your email & password to login</p>
+                                        <!-- Alert Message -->
+                                        @if ($message = Session::get('success'))
+                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                {{ $message }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
+                                        @if ($message = Session::get('error'))
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                                {{ $message }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
                                     </div>
                                     <form action="{{ route('login-proses') }}" method="POST">
                                         @csrf
                                         <div class="row g-3 needs-validation">
                                             <div class="col-12 mt-5">
-                                                <label for="yourEmail" class="form-label">Email</label>
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-envelope"></span>
                                                     </div>
                                                     <input type="email" name="email" class="form-control"
-                                                        value="{{ old('email') }}">
+                                                        value="{{ old('email') }}" placeholder="Email">
                                                     <div class="invalid-feedback">Please enter your email.</div>
                                                 </div>
                                                 @error('email')
@@ -102,12 +98,12 @@
                                                 @enderror
                                             </div>
                                             <div class="col-12">
-                                                <label for="yourPassword" class="form-label">Password</label>
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-key"></span>
                                                     </div>
-                                                    <input type="password" name="password" class="form-control">
+                                                    <input type="password" name="password" class="form-control"
+                                                        placeholder="Password">
                                                     <div class="invalid-feedback">Please enter your password!</div>
                                                 </div>
                                                 @error('password')

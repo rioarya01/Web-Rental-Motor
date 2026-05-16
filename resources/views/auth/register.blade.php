@@ -69,13 +69,12 @@
                                         @csrf
                                         <div class="row g-3 needs-validation" novalidate>
                                             <div class="col-12 mt-5">
-                                                <label for="yournumber" class="form-label">No Telepon</label>
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-telephone"></span>
                                                     </div>
                                                     <input type="text" name="no_telp" class="form-control"
-                                                        value="{{ old('no_telp') }}">
+                                                        value="{{ old('no_telp') }}" placeholder="No Telepon">
                                                     <div class="invalid-feedback">Please enter your number!</div>
                                                 </div>
                                                 @error('no_telp')
@@ -84,13 +83,12 @@
                                             </div>
 
                                             <div class="col-12">
-                                                <label for="yourEmail" class="form-label">Email</label>
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-envelope"></span>
                                                     </div>
                                                     <input type="email" name="email" class="form-control"
-                                                        value="{{ old('email') }}">
+                                                        value="{{ old('email') }}" placeholder="Email">
                                                     <div class="invalid-feedback">Please enter your email.</div>
                                                 </div>
                                                 @error('email')
@@ -99,12 +97,12 @@
                                             </div>
 
                                             <div class="col-12">
-                                                <label for="yourPassword" class="form-label">Password</label>
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-key"></span>
                                                     </div>
-                                                    <input type="password" name="password" class="form-control">
+                                                    <input type="password" name="password" class="form-control"
+                                                        placeholder="Password">
                                                     <div class="invalid-feedback">Please enter your password!</div>
                                                 </div>
                                                 @error('password')

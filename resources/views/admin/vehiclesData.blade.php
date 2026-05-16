@@ -25,23 +25,34 @@
                                         aria-label="Close"></button>
                                 </div>
                             @endif
+                            @if ($message = Session::get('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    {{ $message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
                             <div class="mb-4">
-                                <button class="btn btn-primary btn-action" data-toggle="modal" data-target="#addModal">
+                                <button class="btn btn-primary btn-action" data-bs-toggle="modal"
+                                    data-bs-target="#addModal">
                                     <i class="bi bi-plus"></i> Tambah Data
                                 </button>
                             </div>
                             <!-- Filter Component -->
-                            <form method="GET" action="{{ route('vehicles-data') }}" id="filterForm" class="col-12 mb-3">
+                            <form method="GET" id="filterForm" class="col-12 mb-3">
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <select name="operational_status" class="form-control"
                                             onchange="document.getElementById('filterForm').submit()">
                                             <option value="">-- Status --</option>
                                             <option value="active"
-                                                {{ request('operational_status') == 'active' ? 'selected' : '' }}>Tersedia
+                                                {{ request('operational_status') == 'active' ? 'selected' : '' }}>
+                                                Tersedia
                                             </option>
                                             <option value="inactive"
-                                                {{ request('operational_status') == 'inactive' ? 'selected' : '' }}>Tidak
+                                                {{ request('operational_status') == 'inactive' ? 'selected' : '' }}>
+                                                Tidak
                                                 Tersedia
                                             </option>
                                             <option value="maintenance"
@@ -81,7 +92,6 @@
                                             onchange="document.getElementById('filterForm').submit()">
                                     </div>
                                 </div>
-
                             </form>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
@@ -89,8 +99,8 @@
                                         <tr>
                                             <th scope="col">No</th>
                                             <th scope="col">Nama Kendaraan</th>
-                                            {{-- <th scope="col">Tipe Kendaraan</th>
-                                            <th scope="col">Merk</th> --}}
+                                            <th scope="col">Tipe Kendaraan</th>
+                                            <th scope="col">Merk</th>
                                             <th scope="col">Harga Sewa / Hari</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Gambar</th>
@@ -102,8 +112,8 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $v->name }}</td>
-                                                {{-- <td>{{ $v->vehicle_category->name ?? 'N/A' }}</td>
-                                                <td>{{ $v->vehicle_brand->name ?? 'N/A' }}</td> --}}
+                                                <td>{{ $v->vehicle_category->name ?? 'N/A' }}</td>
+                                                <td>{{ $v->vehicle_brand->name ?? 'N/A' }}</td>
                                                 <td>Rp {{ number_format($v->price_per_day, 0, ',', '.') }}</td>
                                                 <td>
                                                     <span style="{{ $v->operational_status_color }}"
@@ -112,18 +122,26 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    @if ($v->image)
+                                                    @if ($v->image && file_exists(public_path('storage/' . $v->image)))
+                                                        <img src="{{ asset('storage/' . $v->image) }}" width="80">
+                                                    @elseif ($v->image && file_exists(public_path('img/vehicles/' . $v->image)))
                                                         <img src="{{ asset('img/vehicles/' . $v->image) }}" width="80">
+                                                    @else
+                                                        <img src="{{ asset('img/default/defaultIMG.png') }}"
+                                                            width="80">
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="badge bg-success text-decoration-none"><i
-                                                            class="bi bi-pencil-fill"></i>
-                                                    </a>
+                                                    <button class="badge bg-success text-decoration-none"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#updateModal{{ $v->id }}">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
                                                     <a href="#" class="badge bg-warning text-decoration-none"><i
                                                             class="bi bi-ticket-detailed-fill"></i>
                                                     </a>
-                                                    <form action="#" method="POST" style="display:inline-block;">
+                                                    <form action="{{ route('vehicles-data.destroy', $v->id) }}"
+                                                        method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
@@ -191,85 +209,74 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('vehicles-data.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="addForm" action="{{ route('vehicles-data.store') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
                                 <label>Tipe</label>
-
-                                <select name="category_id" class="form-control">
+                                <select name="category_id" class="form-control" required>
                                     <option value="">--Pilih--</option>
                                     @foreach ($category as $c)
                                         <option value="{{ $c->id }}">
                                             {{ $c->name }}
                                         </option>
                                     @endforeach
-
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Merk</label>
-
-                                <select name="brand_id" class="form-control">
+                                <select name="brand_id" class="form-control" required>
                                     <option value="">--Pilih--</option>
-
                                     @foreach ($brands as $b)
                                         <option value="{{ $b->id }}">
                                             {{ $b->name }}
                                         </option>
                                     @endforeach
-
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Code</label>
-
-                                <input type="text" name="code" class="form-control">
+                                <input type="text" name="code" class="form-control" required>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Nama</label>
-
-                                <input type="text" name="name" class="form-control">
+                                <input type="text" name="name" class="form-control" required>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Plate Number</label>
-
-                                <input type="text" name="plate_number" class="form-control">
+                                <input type="text" name="plate_number" class="form-control" required>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Fuel Tank Capacity</label>
-
-                                <input type="number" step="0.01" name="fuel_tank_capacity" class="form-control">
+                                <input type="number" step="0.01" name="fuel_tank_capacity" class="form-control"
+                                    required>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label>Price Per Day</label>
-
-                                <input type="number" name="price_per_day" class="form-control">
+                                <label>Price Per Day (Rp)</label>
+                                <input type="number" name="price_per_day" class="form-control" required>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>Status</label>
 
-                                <select name="operational_status" class="form-control">
+                                <select name="operational_status" class="form-control" required>
                                     <option value="">--Pilih--</option>
-
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="maintenance">Maintenance</option>
-
+                                    <option value="active">active</option>
+                                    <option value="inactive">inactive</option>
+                                    <option value="maintenance">maintenance</option>
                                 </select>
                             </div>
 
                             <div class="col-md-12 mb-3">
                                 <label>Description</label>
-
                                 <textarea name="description" class="form-control" rows="4"></textarea>
                             </div>
 
@@ -278,23 +285,125 @@
                                 <input type="file" name="image" class="form-control">
                             </div>
 
-                            <div class="col-md-12">
-                                <div class="form-check">
-                                    <input type="checkbox" name="is_featured" class="form-check-input" value="1">
-                                    <label class="form-check-label">
-                                        Featured
-                                    </label>
-                                </div>
-                            </div>
-
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="submit" form="addForm" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
     </div><!-- End Basic Modal-->
+
+    {{-- update modal --}}
+    @foreach ($vehicles as $v)
+        <div class="modal fade" id="updateModal{{ $v->id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Data</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm{{ $v->id }}" action="{{ route('vehicles-data.update', $v->id) }}"
+                            method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Tipe</label>
+                                    <select name="category_id" class="form-control" required>
+                                        <option value="">--Pilih--</option>
+                                        @foreach ($category as $c)
+                                            <option value="{{ $c->id }}"
+                                                {{ $v->category_id == $c->id ? 'selected' : '' }}>
+                                                {{ $c->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Merk</label>
+                                    <select name="brand_id" class="form-control" required>
+                                        <option value="">--Pilih--</option>
+                                        @foreach ($brands as $b)
+                                            <option value="{{ $b->id }}"
+                                                {{ $v->brand_id == $b->id ? 'selected' : '' }}>
+                                                {{ $b->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Code</label>
+                                    <input type="text" name="code" class="form-control" required
+                                        value="{{ $v->code }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Nama</label>
+                                    <input type="text" name="name" class="form-control" required
+                                        value="{{ $v->name }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Plate Number</label>
+                                    <input type="text" name="plate_number" class="form-control" required
+                                        value="{{ $v->plate_number }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Fuel Tank Capacity</label>
+                                    <input type="number" step="0.01" name="fuel_tank_capacity" class="form-control"
+                                        required value="{{ $v->fuel_tank_capacity }}">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Price Per Day (Rp)</label>
+                                    <input type="number" name="price_per_day" class="form-control" required
+                                        value="{{ $v->price_per_day }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Status</label>
+
+                                    <select name="operational_status" class="form-control" required>
+                                        <option value="">--Pilih--</option>
+                                        <option value="active" {{ $v->operational_status == 'active' ? 'selected' : '' }}>
+                                            active
+                                        </option>
+                                        <option value="inactive"
+                                            {{ $v->operational_status == 'inactive' ? 'selected' : '' }}>inactive
+                                        </option>
+                                        <option value="maintenance"
+                                            {{ $v->operational_status == 'maintenance' ? 'selected' : '' }}>
+                                            maintenance
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label>Description</label>
+                                    <textarea name="description" class="form-control" rows="4">{{ $v->description }}</textarea>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label>Image</label>
+                                    <input type="file" name="image" class="form-control">
+                                    <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" form="editForm{{ $v->id }}" class="btn btn-primary">Save
+                            changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Basic Modal-->
+    @endforeach
+
 @endsection

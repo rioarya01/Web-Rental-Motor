@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class VehiclesDataController extends Controller
@@ -69,13 +70,12 @@ class VehiclesDataController extends Controller
             'brand_id' => 'required|exists:vehicle_brands,id',
             'code' => 'required|unique:vehicles,code',
             'name' => 'required|max:150',
-            'slug' => 'required|unique:vehicles,slug',
             'plate_number' => 'required|unique:vehicles,plate_number',
             'fuel_tank_capacity' => 'nullable|numeric',
             'description' => 'nullable',
             'price_per_day' => 'required|numeric',
             'operational_status' => 'required|in:active,inactive,maintenance',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
 
         if ($request->hasFile('image')) {
@@ -95,20 +95,69 @@ class VehiclesDataController extends Controller
             'image' => $image ?? null
         ]);
 
-        return redirect()->route('admin.vehiclesData')->with('success', 'Data berhasil ditambahkan');
+        if ($request) {
+            return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        }
+        return redirect()->back()->with('error', 'Data gagal ditambahkan');
     }
 
     /**
      * Update data
      */
-    public function update(Request $request, Vehicle $vehicle) {}
+    public function update(Request $request, string $id)
+    {
+        $vehicle = Vehicle::findOrFail($id);
+        $request->validate([
+            'category_id' => 'required|exists:vehicle_categories,id',
+            'brand_id' => 'required|exists:vehicle_brands,id',
+            'code' => 'required|unique:vehicles,code,' . $vehicle->id,
+            'name' => 'required|max:150',
+            'plate_number' => 'required|unique:vehicles,plate_number,' . $vehicle->id,
+            'fuel_tank_capacity' => 'nullable|numeric',
+            'description' => 'nullable',
+            'price_per_day' => 'required|numeric',
+            'operational_status' => 'required|in:active,inactive,maintenance',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image')->store('vehicles', 'public');
+        }
+
+        $vehicle->update([
+            'category_id' => $request->category_id,
+            'brand_id' => $request->brand_id,
+            'code' => $request->code,
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'plate_number' => $request->plate_number,
+            'fuel_tank_capacity' => $request->fuel_tank_capacity,
+            'description' => $request->description,
+            'price_per_day' => $request->price_per_day,
+            'operational_status' => $request->operational_status,
+            'image' => $image ?? $vehicle->image
+        ]);
+
+        if ($vehicle) {
+            return redirect()->back()->with('success', 'Data berhasil diupdate');
+        }
+        return redirect()->back()->with('error', 'Data gagal diupdate');
+    }
 
     /**
      * Delete data
      */
-    public function destroy(Vehicle $vehicle)
+    public function destroy($id)
     {
-        $vehicle->delete();
-        return redirect()->route('admin.vehiclesData')->with('success', 'Data berhasil dihapus');
+        $data = Vehicle::find($id);
+        // Hapus file gambar di storage
+        if ($data->image && Storage::disk('public')->exists($data->image)) {
+            Storage::disk('public')->delete($data->image);
+        }
+
+        if ($data) {
+            $data->delete();
+        }
+        return redirect()->back()->with('error', 'Data berhasil dihapus');
     }
 }
