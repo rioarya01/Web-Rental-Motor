@@ -29,8 +29,8 @@ Route::middleware('admin')->group(function () {
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
-    Route::get('/vehicles', [VehiclesController::class, 'index'])->name('vehicles.index');
-    Route::get('/vehicle-detail/{slug}', [VehiclesController::class, 'show'])->name('vehicle.detail');
+    Route::get('user/vehicles-list', [VehiclesController::class, 'index'])->name('vehicles-list.index');
+    Route::get('user/vehicle-detail/{slug}', [VehiclesController::class, 'show'])->name('vehicle-detail.show');
 });
 
 

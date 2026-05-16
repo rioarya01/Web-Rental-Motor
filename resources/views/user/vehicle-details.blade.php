@@ -107,16 +107,39 @@
     }
 </style>
 
-<div class="container" style="padding: 100px 0;">
+{{-- Heading --}}
+<section class="container" style="margin-top: 150px;">
+    {{-- Heading --}}
+    <div>
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+            Detail Kendaraan
+        </h2>
+        <p class="text-gray-600">
+            Lihat detail lengkap kendaraan yang ingin Anda sewa, mulai dari spesifikasi, harga, hingga fasilitas yang tersedia.
+        </p>
+    </div>
+</section>
+{{-- Vehicle Details --}}
+<section class="container" style="padding: 50px 0;">
     <div class="vehicle-wrapper">
-        <div class="row g-4">
+        <div class="row">
             <!-- LEFT -->
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <img
                     src="{{ asset('img/vehicles/' . $vehicle->image) }}"
                     class="vehicle-image"
                     alt="{{ $vehicle->name }}"
                 >
+            </div>
+            <!-- RIGHT -->
+            <div class="col-lg-7">
+                <h1 class="vehicle-title">{{ $vehicle->name }}</h1>
+                <div class="mb-4">
+                    <span style="{{ $vehicle->operational_status_color }}"
+                        class="px-2 py-1 text-xs fw-semibold rounded">
+                        {{ $vehicle->operational_status_label }}
+                    </span>
+                </div>
                 <div class="mt-4">
                     <div class="d-flex justify-content-between mb-3">
                         <span class="spec-label">Brand</span>
@@ -135,44 +158,10 @@
                         <span class="spec-value">{{ $vehicle->plate_number ?? '-' }}</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- RIGHT -->
-            <div class="col-lg-8">
-                <h1 class="vehicle-title">{{ $vehicle->name }}</h1>
-                <div class="mb-4">
-                    <span style="{{ $vehicle->operational_status_color }}"
-                        class="px-2 py-1 text-xs fw-semibold rounded">
-                        {{ $vehicle->operational_status_label }}
-                    </span>
-                </div>
-                <p class="vehicle-desc">
+                <p class="vehicle-desc mt-4">
                     {{ $vehicle->description ?? 'Tidak ada deskripsi untuk kendaraan ini.' }}
                 </p>
                 <hr class="border border-dark">
-                <div class="section-title">
-                    Perlengkapan:
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <ul class="equipment-list">
-                            <li>Bensin 1 liter</li>
-                            <li>Helm SNI 2 buah</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <ul class="equipment-list">
-                            <li>Jas hujan 2 buah</li>
-                            <li>STNK</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <ul class="equipment-list">
-                            <li>Tas belanja 1 buah</li>
-                            <li>Sarung tangan 1 buah</li>
-                        </ul>
-                    </div>
-                </div>
                 <div class="booking-wrapper mt-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="price">
@@ -187,5 +176,5 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 @endsection
