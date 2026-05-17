@@ -2,8 +2,9 @@
 
     <div class="d-flex align-items-center justify-content-between">
         <a href="{{ route('home.admin') }}" class="logo d-flex align-items-center">
-            <img src="{{ asset('nice/assets/img/logo.png') }}" alt="">
-            <span class="d-none d-lg-block">AutoMoto</span>
+            <img src="{{ asset('img/logo/vertical.svg') }}" alt="Logo" class="img-fluid"
+                style="height: 50vh; width: auto;">
+            <span class="d-none d-lg-block">Sewa Motor ID</span>
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->

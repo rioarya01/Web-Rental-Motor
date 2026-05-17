@@ -60,8 +60,10 @@
 
                                 <div class="card-body">
                                     <div class="pt-4 pb-2">
-                                        <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                                        <p class="text-center small">Enter your email & password to login</p>
+                                        <h5 class="card-title text-center pb-0 fs-4"><img
+                                                src="{{ asset('img/logo/horizontal.svg') }}" alt="Logo"
+                                                class="img-fluid" style="height: 10vh; width: auto;"></h5>
+                                        <br>
                                         <!-- Alert Message -->
                                         @if ($message = Session::get('success'))
                                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -83,7 +85,7 @@
                                     <form action="{{ route('login-proses') }}" method="POST">
                                         @csrf
                                         <div class="row g-3 needs-validation">
-                                            <div class="col-12 mt-5">
+                                            <div class="col-12 mt-5 mb-2">
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi bi-envelope"></span>
