@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-
     public function index()
     {
         // abort(500);
@@ -21,13 +20,13 @@ class LoginController extends Controller
 
         $request->validate([
             'username' => 'required',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $credentials = [
             $loginType => $request->username,
-            'password' => $request->password
+            'password' => $request->password,
         ];
 
         if (Auth::attempt($credentials)) {
@@ -47,6 +46,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return redirect()->route('login')->with('success', 'Kamu berhasil logout');
     }
 }

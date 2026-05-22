@@ -14,19 +14,19 @@ class VehicleController extends Controller
     {
         // Filters
         $filters = collect($request->only(['search', 'type']))
-            ->filter() 
+            ->filter()
             ->all();
 
         $query = Vehicle::with('vehicle_category', 'vehicle_brand')
-                    ->orderBy('id', 'desc');
+            ->orderBy('id', 'desc');
 
         // Search Filter
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         // Type Filter
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->whereHas('vehicle_category', function ($q) use ($filters) {
                 $q->whereRaw('LOWER(name) = ?', [strtolower($filters['type'])]);
             });

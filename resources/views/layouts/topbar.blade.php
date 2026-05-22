@@ -13,13 +13,13 @@
         <ul class="d-flex align-items-center">
 
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link active" aria-current="page" href="{{ route('home.user') }}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Pilih Kendaraan</a>
+                <a class="nav-link active" aria-current="page" href="{{ route('home.user') }}">Pilih Kendaraan</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Daftar Pesanan</a>
+                <a class="nav-link active" aria-current="page" href="{{ route('booking.history') }}">Daftar Pesanan</a>
             </li>
 
             <li class="nav-item dropdown pe-3">

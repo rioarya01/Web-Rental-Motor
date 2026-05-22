@@ -3,9 +3,10 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -25,8 +26,13 @@ Route::middleware('admin')->group(function () {
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
-});
 
+    // Booking Routes
+    Route::get('/booking/history', [BookingController::class, 'history'])->name('booking.history');
+    Route::get('/booking/checkout/{booking}', [BookingController::class, 'checkout'])->name('booking.checkout');
+    Route::get('/booking/{vehicle:slug}', [BookingController::class, 'create'])->name('booking.create');
+    Route::post('/booking/{vehicle:slug}', [BookingController::class, 'store'])->name('booking.store');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

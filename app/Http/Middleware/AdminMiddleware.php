@@ -19,6 +19,7 @@ class AdminMiddleware
         if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
         }
+
         return abort(403, 'Forbidden');
     }
 }

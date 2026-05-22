@@ -20,13 +20,13 @@ class RegisterController extends Controller
             'name' => 'required',
             'username' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:5'
+            'password' => 'required|min:5',
         ]);
         $data = [
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ];
         User::create($data);
 
