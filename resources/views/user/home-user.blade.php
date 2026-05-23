@@ -312,9 +312,10 @@
                                         class="btn btn-outline-primary rounded-3 w-100">
                                         View Details
                                     </a>
-                                    <button class="btn btn-primary rounded-3 w-100">
+                                    <a href="{{ route('booking.create', $vehicle->slug) }}"
+                                        class="btn btn-primary rounded-3 w-100">
                                         Booking
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

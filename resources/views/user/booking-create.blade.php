@@ -1,25 +1,18 @@
 @extends('layouts.main')
 @section('title', 'Sewa Kendaraan')
 @section('content')
-<main id="main" class="main" style="margin: 8vh">
-    <div class="container">
-        <div class="pagetitle">
-            <h1>Sewa Kendaraan</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('home.user') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('home.user') }}">Pilih Kendaraan</a></li>
-                    <li class="breadcrumb-item active">Sewa</li>
-                </ol>
-            </nav>
-        </div><!-- End Page Title -->
+    <main class="justify-content-center" style="margin-top: 120px;">
+        <div class="container">
+            <div class="mb-3 mb-md-5">
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900">Sewa Kendaraan</h2>
+                <p class="text-gray-600">Lengkapi form berikut untuk melanjutkan pemesanan kendaraan Anda.</p>
+            </div>
 
-        <section class="section">
-            <div class="row">
-                <div class="col-lg-8 mb-4">
-                    <div class="card border-0 shadow-sm" style="border-radius: 12px; background-color: #f9fbfd;">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold">Formulir Penyewaan</h5>
+            <section>
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <h5 class="card-title fw-bold mb-4">Formulir Penyewaan</h5>
 
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -36,9 +29,13 @@
                                 <div class="row mb-3">
                                     <label for="rent_start" class="col-sm-3 col-form-label">Tanggal & Jam Ambil</label>
                                     <div class="col-sm-9">
-                                        <input type="datetime-local" class="form-control" id="rent_start" name="rent_start" value="{{ old('rent_start', \Carbon\Carbon::tomorrow()->format('Y-m-d\T06:00')) }}" required min="{{ \Carbon\Carbon::now()->addHours(24)->format('Y-m-d\TH:i') }}">
-                                        <small class="text-muted d-block mt-1">* Pemesanan wajib <strong>minimal 1x24 jam</strong> sebelum waktu penggunaan.</small>
-                                        <small class="text-muted d-block">* Jam operasional pengambilan kendaraan pukul 06:00 - 22:00</small>
+                                        <input type="datetime-local" class="form-control" id="rent_start" name="rent_start"
+                                            value="{{ old('rent_start', \Carbon\Carbon::tomorrow()->format('Y-m-d\T06:00')) }}"
+                                            required min="{{ \Carbon\Carbon::now()->addHours(24)->format('Y-m-d\TH:i') }}">
+                                        <small class="text-muted d-block mt-1">* Pemesanan wajib <strong>minimal 1x24
+                                                jam</strong> sebelum waktu penggunaan.</small>
+                                        <small class="text-muted d-block">* Jam operasional pengambilan kendaraan pukul
+                                            06:00 - 22:00</small>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -51,18 +48,22 @@
                                             <option value="4">4 Hari</option>
                                             <option value="5">5 Hari</option>
                                         </select>
-                                        <small class="text-primary d-block fw-semibold mb-1">* 1 hari dihitung 24 jam. Waktu pengembalian menyesuaikan jam pengambilan.</small>
+                                        <small class="text-primary d-block fw-semibold mb-1">* 1 hari dihitung 24 jam.
+                                            Waktu pengembalian menyesuaikan jam pengambilan.</small>
                                         <small class="text-danger fw-bold" id="end_date_display">Selesai: -</small>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="pickup_address" class="col-sm-3 col-form-label">Alamat Pengambilan / Pengiriman</label>
+                                    <label for="pickup_address" class="col-sm-3 col-form-label">Alamat Pengambilan /
+                                        Pengiriman</label>
                                     <div class="col-sm-9">
-                                        <textarea class="form-control" id="pickup_address" name="pickup_address" rows="3" required placeholder="Tuliskan alamat lengkap">{{ old('pickup_address') }}</textarea>
+                                        <textarea class="form-control" id="pickup_address" name="pickup_address" rows="3" required
+                                            placeholder="Tuliskan alamat lengkap">{{ old('pickup_address') }}</textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="notes" class="col-sm-3 col-form-label">Catatan Tambahan (Opsional)</label>
+                                    <label for="notes" class="col-sm-3 col-form-label">Catatan Tambahan
+                                        (Opsional)</label>
                                     <div class="col-sm-9">
                                         <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Cth: Helm 2, Jas hujan 2">{{ old('notes') }}</textarea>
                                     </div>
@@ -77,21 +78,25 @@
                             </form>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm sticky-top" style="border-radius: 12px; top: 100px;">
-                        <div class="card-body p-4">
-                            <h5 class="card-title fw-bold">Ringkasan Kendaraan</h5>
-                            @if ($vehicle->image)
-                                <img src="{{ asset('img/vehicles/' . $vehicle->image) }}" class="img-fluid rounded mb-3" alt="{{ $vehicle->name }}">
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
+                            <h5 class="card-title fw-bold mb-4">Ringkasan Kendaraan</h5>
+                            @if ($vehicle->image && file_exists(public_path('storage/' . $vehicle->image)))
+                                <img src="{{ asset('storage/' . $vehicle->image) }}" class="img-fluid vehicle-image">
+                            @elseif ($vehicle->image && file_exists(public_path('img/vehicles/' . $vehicle->image)))
+                                <img src="{{ asset('img/vehicles/' . $vehicle->image) }}" class="img-fluid vehicle-image">
+                            @else
+                                <img src="{{ asset('img/default/defaultIMG.png') }}" class="img-fluid vehicle-image">
                             @endif
                             <h6 class="fw-bold">{{ $vehicle->name }}</h6>
-                            <p class="text-secondary small mb-1">{{ $vehicle->vehicle_category->name ?? '-' }} | {{ $vehicle->vehicle_brand->name ?? '-' }}</p>
+                            <p class="text-secondary small mb-1">{{ $vehicle->vehicle_category->name ?? '-' }} |
+                                {{ $vehicle->vehicle_brand->name ?? '-' }}</p>
                             <hr>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Harga / Hari:</span>
-                                <span class="fw-semibold">Rp {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
+                                <span class="fw-semibold">Rp
+                                    {{ number_format($vehicle->price_per_day, 0, ',', '.') }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Estimasi Durasi:</span>
@@ -104,55 +109,57 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
-</main>
+            </section>
+        </div>
+    </main>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const startInput = document.getElementById('rent_start');
-        const durationInput = document.getElementById('duration_days');
-        const durationDisplay = document.getElementById('duration_display');
-        const totalDisplay = document.getElementById('total_display');
-        const endDateDisplay = document.getElementById('end_date_display');
-        const pricePerDay = {{ $vehicle->price_per_day }};
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startInput = document.getElementById('rent_start');
+            const durationInput = document.getElementById('duration_days');
+            const durationDisplay = document.getElementById('duration_display');
+            const totalDisplay = document.getElementById('total_display');
+            const endDateDisplay = document.getElementById('end_date_display');
+            const pricePerDay = {{ $vehicle->price_per_day }};
 
-        const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+                'Oktober', 'November', 'Desember'
+            ];
 
-        function calculateTotal() {
-            if (durationInput.value && startInput.value) {
-                const diffDays = parseInt(durationInput.value);
-                const total = diffDays * pricePerDay;
-                
-                durationDisplay.textContent = diffDays + ' Hari';
-                totalDisplay.textContent = 'Rp ' + total.toLocaleString('id-ID');
+            function calculateTotal() {
+                if (durationInput.value && startInput.value) {
+                    const diffDays = parseInt(durationInput.value);
+                    const total = diffDays * pricePerDay;
 
-                // Hitung End Date
-                const startDate = new Date(startInput.value);
-                startDate.setDate(startDate.getDate() + diffDays);
-                const dayName = days[startDate.getDay()];
-                const date = startDate.getDate();
-                const monthName = months[startDate.getMonth()];
-                
-                // Ambil jam dan menit dengan format 00:00
-                const hours = String(startDate.getHours()).padStart(2, '0');
-                const minutes = String(startDate.getMinutes()).padStart(2, '0');
-                
-                endDateDisplay.textContent = `Batas Pengembalian: ${dayName}, ${date} ${monthName} ${startDate.getFullYear()} pukul ${hours}:${minutes}`;
-            } else {
-                durationDisplay.textContent = '- Hari';
-                totalDisplay.textContent = 'Rp 0';
-                endDateDisplay.textContent = 'Batas Pengembalian: -';
+                    durationDisplay.textContent = diffDays + ' Hari';
+                    totalDisplay.textContent = 'Rp ' + total.toLocaleString('id-ID');
+
+                    // Hitung End Date
+                    const startDate = new Date(startInput.value);
+                    startDate.setDate(startDate.getDate() + diffDays);
+                    const dayName = days[startDate.getDay()];
+                    const date = startDate.getDate();
+                    const monthName = months[startDate.getMonth()];
+
+                    // Ambil jam dan menit dengan format 00:00
+                    const hours = String(startDate.getHours()).padStart(2, '0');
+                    const minutes = String(startDate.getMinutes()).padStart(2, '0');
+
+                    endDateDisplay.textContent =
+                        `Batas Pengembalian: ${dayName}, ${date} ${monthName} ${startDate.getFullYear()} pukul ${hours}:${minutes}`;
+                } else {
+                    durationDisplay.textContent = '- Hari';
+                    totalDisplay.textContent = 'Rp 0';
+                    endDateDisplay.textContent = 'Batas Pengembalian: -';
+                }
             }
-        }
 
-        durationInput.addEventListener('change', calculateTotal);
-        startInput.addEventListener('change', calculateTotal);
-        
-        // Kalkulasi di awal
-        calculateTotal();
-    });
-</script>
+            durationInput.addEventListener('change', calculateTotal);
+            startInput.addEventListener('change', calculateTotal);
+
+            // Kalkulasi di awal
+            calculateTotal();
+        });
+    </script>
 @endsection
