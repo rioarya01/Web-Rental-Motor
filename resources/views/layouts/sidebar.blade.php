@@ -27,14 +27,14 @@
      <ul class="sidebar-nav" id="sidebar-nav">
 
          <li class="nav-item">
-             <a class="nav nav-link {{ request()->routeIs('home.admin') ? 'active ' : '' }}"
+             <a class="nav nav-link {{ request()->routeIs('home.admin') ? 'active' : '' }}"
                  href="{{ route('home.admin') }}">
                  <i class="bi bi-grid"></i>
                  <span>Dashboard</span>
              </a>
          </li>
          <li class="nav-item">
-             <a class="nav nav-link {{ request()->routeIs('vehicles-data') ? 'active ' : '' }}"
+             <a class="nav nav-link {{ request()->routeIs('vehicles-data') ? 'active' : '' }}"
                  href="{{ route('vehicles-data') }}">
                  <i class="bi bi-gear"></i><span>Kendaraan</span>
              </a>
