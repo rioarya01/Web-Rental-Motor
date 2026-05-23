@@ -32,8 +32,6 @@ Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
     Route::get('user/vehicles-list', [VehiclesController::class, 'index'])->name('vehicles-list.index');
     Route::get('user/vehicle-detail/{slug}', [VehiclesController::class, 'show'])->name('vehicle-detail.show');
-});
-
     // Booking Routes
     Route::get('/booking/history', [BookingController::class, 'history'])->name('booking.history');
     Route::get('/booking/checkout/{booking}', [BookingController::class, 'checkout'])->name('booking.checkout');
