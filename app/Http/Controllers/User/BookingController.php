@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\UserMiddleware;
 use App\Models\Booking;
 use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
+    public static function middleware(): array
+    {
+        return [
+            'user' => UserMiddleware::class,
+        ];
+    }
     public function create(Vehicle $vehicle)
     {
         return view('user.booking-create', compact('vehicle'));
@@ -47,13 +55,13 @@ class BookingController extends Controller
 
         // Generate Booking Code
         do {
-            $bookingCode = 'BK-'.Str::upper(Str::random(2)).rand(100, 999);
+            $bookingCode = 'BK-' . Str::upper(Str::random(2)) . rand(100, 999);
         } while (Booking::where('booking_code', $bookingCode)->exists());
 
         $booking = Booking::create([
             'booking_code' => $bookingCode,
             'vehicle_id' => $vehicle->id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'booking_date' => now(),
             'rent_start' => $rentStart,
             'rent_end' => $rentEnd,
@@ -72,7 +80,7 @@ class BookingController extends Controller
     public function checkout(Booking $booking)
     {
         // booking milik user yang sedang login
-        if ($booking->user_id !== auth()->id()) {
+        if ($booking->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -84,7 +92,7 @@ class BookingController extends Controller
     public function history()
     {
         $bookings = Booking::with('vehicle')
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
