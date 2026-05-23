@@ -19,12 +19,12 @@ class RegisterController extends Controller
         $request->validate([
             'no_telp' => 'required|unique:users,no_telp',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:5'
+            'password' => 'required|min:5',
         ]);
         $data = [
             'no_telp' => $request->no_telp,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ];
         User::create($data);
 

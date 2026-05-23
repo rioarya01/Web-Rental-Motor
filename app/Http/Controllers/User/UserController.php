@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\UserMiddleware;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
@@ -13,9 +14,10 @@ class UserController extends Controller
     public static function middleware(): array
     {
         return [
-            'user' => \App\Http\Middleware\UserMiddleware::class,
+            'user' => UserMiddleware::class,
         ];
     }
+
     public function index(Request $request)
     {
         // return view('user.home-user');
@@ -24,7 +26,7 @@ class UserController extends Controller
 
         $category = VehicleCategory::all();
         $brands = VehicleBrand::all();
-        
+
         // // Search Filter
         // if ($request->has('search') && $request->search != '') {
         //     $query->where('name', 'like', '%' . $request->search . '%');

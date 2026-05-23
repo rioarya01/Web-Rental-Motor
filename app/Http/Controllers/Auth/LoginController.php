@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-
     public function index()
     {
         // abort(500);
@@ -47,6 +46,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return redirect()->route('login')->with('success', 'Kamu berhasil logout');
     }
 }

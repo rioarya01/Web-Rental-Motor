@@ -5,10 +5,9 @@ namespace Database\Seeders;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
-
 
 class VehicleSeeder extends Seeder
 {
@@ -21,13 +20,11 @@ class VehicleSeeder extends Seeder
         $categories = VehicleCategory::all();
         $faker = Faker::create();
 
-
         if ($brands->isEmpty() || $categories->isEmpty()) {
             $this->command->warn('Vehicle brands and categories must be seeded before running VehicleSeeder.');
 
             return;
         }
-
 
         $vehicleImages = [];
 
@@ -59,22 +56,22 @@ class VehicleSeeder extends Seeder
             'Naked Bike' => [
                 ['brand' => 'Suzuki', 'name' => 'Hayabusa'],
                 ['brand' => 'Suzuki', 'name' => 'GSX'],
-            ]
+            ],
         ];
 
         for ($i = 0; $i < 10; $i++) {
             $category = $categories->random();
             $bike = $faker->randomElement($bikeModel[$category->name]);
             $brand = $brands->where('name', $bike['brand'])->first() ?? $brands->random();
-            $name = $bike['brand'] . ' ' . $bike['name'];
+            $name = $bike['brand'].' '.$bike['name'];
 
             Vehicle::updateOrCreate(
                 [
                     'category_id' => $category->id,
                     'brand_id' => $brand->id,
-                    'code' => strtoupper($brand->name[0]) . $faker->bothify('??###'),
+                    'code' => strtoupper($brand->name[0]).$faker->bothify('??###'),
                     'name' => $name,
-                    'slug' => Str::slug($name) . '-' . $faker->unique()->numberBetween(1, 9999),
+                    'slug' => Str::slug($name).'-'.$faker->unique()->numberBetween(1, 9999),
                     'plate_number' => $faker->regexify('[A-Z]{1,2} [0-9]{3,4} [A-Z]{1,2}'),
                     'fuel_tank_capacity' => $faker->optional()->randomFloat(2, 3, 12),
                     'description' => $faker->optional()->sentence(12),
