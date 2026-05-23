@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 
 class VehiclesController extends Controller
 {
+    public static function middleware(): array
+    {
+        return [
+            'user' => UserMiddleware::class,
+        ];
+    }
     public function index(Request $request)
     {
         // Filter
