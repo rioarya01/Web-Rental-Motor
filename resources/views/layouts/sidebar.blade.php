@@ -38,7 +38,13 @@
                  href="{{ route('vehicles-data') }}">
                  <i class="bi bi-gear"></i><span>Kendaraan</span>
              </a>
-         </li><!-- End Components Nav -->
+         </li>
+         <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('customers.index') ? 'active' : '' }}"
+                 href="{{ route('customers.index') }}">
+                 <i class="bi bi-people"></i><span>Customers</span>
+             </a>
+         </li>
 
      </ul>
 

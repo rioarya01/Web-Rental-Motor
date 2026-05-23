@@ -25,7 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'whatsapp',
+        'address',
         'ktp_number',
         'sim_number',
         'avatar_url',

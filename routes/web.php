@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -23,10 +24,14 @@ Route::post('/register-proses', [RegisterController::class, 'register_proses'])-
 
 Route::middleware('admin')->group(function () {
     Route::get('admin', [AdminController::class, 'index'])->name('home.admin');
-    Route::get('/admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
-    Route::post('/admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
-    Route::put('/admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
-    Route::delete('/admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
+    Route::get('admin/vehicles', [VehiclesDataController::class, 'index'])->name('vehicles-data');
+    Route::post('admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
+    Route::put('admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
+    Route::delete('admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
+    Route::get('admin/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::post('admin/customers/store', [CustomerController::class, 'store'])->name('customers.store');
+    Route::delete('admin/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::put('admin/customers/{id}/', [CustomerController::class, 'edit'])->name('customers.edit');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');

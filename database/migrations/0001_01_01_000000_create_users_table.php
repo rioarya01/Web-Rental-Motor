@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->timezone('Asia/Jakarta')->nullable();
             $table->string('password');
             $table->string('role')->default('user');
-            $table->string('whatsapp', 20)->nullable();
+            $table->string('address')->nullable();
             $table->string('ktp_number', 30)->nullable();
             $table->string('sim_number', 30)->nullable();
             $table->string('avatar_url')->nullable();
