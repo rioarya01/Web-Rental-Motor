@@ -8,7 +8,6 @@ use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
 use Illuminate\Http\Request;
-
 class UserController extends Controller
 {
     public static function middleware(): array
@@ -17,47 +16,14 @@ class UserController extends Controller
             'user' => UserMiddleware::class,
         ];
     }
-
     public function index(Request $request)
     {
-        // return view('user.home-user');
-        $query = Vehicle::with('vehicle_category', 'vehicle_brand')
-            ->orderBy('id', 'desc');
-
+        $vehicles = Vehicle::with('vehicle_category', 'vehicle_brand')
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
         $category = VehicleCategory::all();
         $brands = VehicleBrand::all();
-
-        // // Search Filter
-        // if ($request->has('search') && $request->search != '') {
-        //     $query->where('name', 'like', '%' . $request->search . '%');
-        // }
-
-        // // Filter berdasarkan kategori
-        // if ($request->has('vehicle_category') && $request->vehicle_category != '') {
-        //     $query->where('category_id', $request->vehicle_category);
-        // }
-
-        // // Filter brand
-        // if ($request->has('vehicle_brand') && $request->vehicle_brand != '') {
-        //     $query->where('brand_id', $request->vehicle_brand);
-        // }
-
-        // // Filter status
-        // $query->when($request->operational_status, function ($q, $status) {
-        //     $q->where('operational_status', $status);
-        // });
-
-        // // Filter harga (range)
-        // $query->when($request->min_price, function ($q, $min) {
-        //     $q->where('price_per_day', '>=', $min);
-        // });
-
-        // $query->when($request->max_price, function ($q, $max) {
-        //     $q->where('price_per_day', '<=', $max);
-        // });
-
-        $vehicles = $query->paginate(3)->withQueryString();
-
         return view('user.home-user', compact(
             'vehicles',
             'category',

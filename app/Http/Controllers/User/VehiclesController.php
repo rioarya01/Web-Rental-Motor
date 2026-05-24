@@ -22,40 +22,35 @@ class VehiclesController extends Controller
         // Filter
         $query = Vehicle::with('vehicle_category', 'vehicle_brand')
             ->orderBy('id', 'desc');
-
+            
         $category = VehicleCategory::all();
         $brands = VehicleBrand::all();
+        
         // Search Filter
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
-
         // Filter berdasarkan kategori
-        if ($request->has('vehicle_category') && $request->vehicle_category != '') {
+        if ($request->filled('vehicle_category')) {
             $query->where('category_id', $request->vehicle_category);
         }
-
         // Filter brand
-        if ($request->has('vehicle_brand') && $request->vehicle_brand != '') {
+        if ($request->filled('vehicle_brand')) {
             $query->where('brand_id', $request->vehicle_brand);
         }
-
         // Filter status
-        $query->when($request->operational_status, function ($q, $status) {
-            $q->where('operational_status', $status);
-        });
-
-        // Filter harga (range)
-        $query->when($request->min_price, function ($q, $min) {
-            $q->where('price_per_day', '>=', $min);
-        });
-
-        $query->when($request->max_price, function ($q, $max) {
-            $q->where('price_per_day', '<=', $max);
-        });
-
+        if ($request->filled('operational_status')) {
+            $query->where('operational_status', $request->operational_status);
+        }
+        // Filter harga minimum
+        if ($request->filled('min_price')) {
+            $query->where('price_per_day', '>=', $request->min_price);
+        }
+        // Filter harga maximum
+        if ($request->filled('max_price')) {
+            $query->where('price_per_day', '<=', $request->max_price);
+        }
         $vehicles = $query->paginate(6)->withQueryString();
-
         return view('user.vehicles-list', compact(
             'vehicles',
             'category',

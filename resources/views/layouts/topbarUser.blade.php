@@ -144,7 +144,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link py-3 border-bottom" href="#">
+                            <a class="nav-link py-3 border-bottom {{ request()->routeIs('booking.history') ? 'active text-primary fw-semibold' : '' }}"
+                                href="{{ route('booking.history') }}">
                                 Daftar Pesanan
                             </a>
                         </li>
