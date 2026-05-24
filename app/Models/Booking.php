@@ -27,6 +27,27 @@ class Booking extends Model
         'notes',
     ];
 
+    public function getBookingStatusLabelAttribute() //accessor untuk mendapatkan label status booking
+    {
+        return match ($this->status->name) {
+            'pending_payment' => 'Menunggu Pembayaran',
+            'paid' => 'Sudah Dibayar',
+            'payment_failed' => 'Pembayaran Gagal',
+            'canceled' => 'Dibatalkan',
+            default => '-',
+        };
+    }
+    public function getBookingStatusBadgeAttribute(): string
+    {
+        return match ($this->status->name) {
+            'pending_payment' => 'bg-light text-secondary border',
+            'paid' => 'bg-success-light text-success border border-success',
+            'payment_failed' => 'bg-danger-light text-danger border border-danger',
+            'canceled' => 'bg-primary text-white',
+            default => 'bg-secondary text-white',
+        };
+    }
+
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
