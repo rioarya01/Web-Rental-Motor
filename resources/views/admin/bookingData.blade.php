@@ -49,9 +49,15 @@
                                                 <td>{{ $b->vehicle->name }}</td>
                                                 <td>{{ $b->user->email }}</td>
                                                 <td>{{ $b->user->no_telp }}</td>
-                                                <td class="fw-bold text-danger">Rp
-                                                    {{ number_format($b->total_amount, 0, ',', '.') }}
-                                                </td>
+                                                @if ($b->booking_status_id == '1')
+                                                    <td class="fw-bold text-danger">Rp
+                                                        {{ number_format($b->total_amount, 0, ',', '.') }}
+                                                    </td>
+                                                @elseif ($b->booking_status_id == '2')
+                                                    <td class="fw-bold text-success">Rp
+                                                        {{ number_format($b->total_amount, 0, ',', '.') }}
+                                                    </td>
+                                                @endif
                                                 <td>
                                                     <span class="badge rounded-pill {{ $b->booking_status_badge }}">
                                                         {{ $b->booking_status_label }}
