@@ -66,7 +66,7 @@
                             <img src="{{ asset('nice/assets/img/profile-img.jpg') }}" alt="Profile"
                                 class="rounded-circle" width="38" height="38">
                             <span class="d-none d-md-block dropdown-toggle ps-2">
-                                K. Anderson
+                                {{ Auth::user()->name }}
                             </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end profile">

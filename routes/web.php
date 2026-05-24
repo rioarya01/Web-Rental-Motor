@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BookingDataController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
@@ -32,6 +33,8 @@ Route::middleware('admin')->group(function () {
     Route::post('admin/customers/store', [CustomerController::class, 'store'])->name('customers.store');
     Route::delete('admin/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::put('admin/customers/{id}/', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::get('admin/booking', [BookingDataController::class, 'index'])->name('booking.index');
+    Route::put('admin/booking/{id}/update-status', [BookingDataController::class, 'updateStatus'])->name('booking.updateStatus');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');

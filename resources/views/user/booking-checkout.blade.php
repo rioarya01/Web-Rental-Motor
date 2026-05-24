@@ -25,7 +25,7 @@
                                 <tr>
                                     <td class="text-muted">No. whatsapp</td>
                                     <td>:</td>
-                                    <td class="fw-semibold">{{ $booking->user->whatsapp ?? '-' }}</td>
+                                    <td class="fw-semibold">{{ $booking->user->no_telp ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">No. KTP</td>

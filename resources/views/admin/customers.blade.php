@@ -34,6 +34,7 @@
                                     <thead class="table-borderless">
                                         <tr>
                                             <th scope="col">No</th>
+                                            <th scope="col">Nama Lengkap</th>
                                             <th scope="col">Username</th>
                                             <th scope="col">Email</th>
                                             <th scope="col">Whatsapp</th>
@@ -44,6 +45,7 @@
                                         @foreach ($customers as $index => $c)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
+                                                <td>{{ $c->name }}</td>
                                                 <td>{{ $c->username }}</td>
                                                 <td>{{ $c->email }}</td>
                                                 <td>{{ $c->no_telp }}</td>

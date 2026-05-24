@@ -45,7 +45,12 @@
                  <i class="bi bi-people"></i><span>Customers</span>
              </a>
          </li>
-
+         <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('booking.index') ? 'active' : '' }}"
+                 href="{{ route('booking.index') }}">
+                 <i class="bi bi-calendar"></i><span>Data Booking</span>
+             </a>
+         </li>
      </ul>
 
  </aside><!-- End Sidebar-->

@@ -30,8 +30,8 @@ class Booking extends Model
     public function getBookingStatusLabelAttribute() //accessor untuk mendapatkan label status booking
     {
         return match ($this->status->name) {
-            'pending_payment' => 'Menunggu Pembayaran',
-            'paid' => 'Sudah Dibayar',
+            'pending_payment' => 'Belum Bayar',
+            'paid' => 'Sudah Bayar',
             'payment_failed' => 'Pembayaran Gagal',
             'canceled' => 'Dibatalkan',
             default => '-',

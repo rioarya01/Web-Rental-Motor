@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -18,11 +19,13 @@ class RegisterController extends Controller
     {
         $request->validate([
             'no_telp' => 'required|unique:users,no_telp',
+            'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:5',
         ]);
         $data = [
             'no_telp' => $request->no_telp,
+            'name' => Str::title($request->name),
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ];
