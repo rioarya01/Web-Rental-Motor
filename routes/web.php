@@ -35,6 +35,7 @@ Route::middleware('admin')->group(function () {
     Route::put('admin/customers/{id}/', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::get('admin/booking', [BookingDataController::class, 'index'])->name('booking.index');
     Route::put('admin/booking/{id}/update-status', [BookingDataController::class, 'updateStatus'])->name('booking.updateStatus');
+    ROute::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
 });
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');

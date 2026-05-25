@@ -132,20 +132,16 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button class="badge bg-success text-decoration-none"
+                                                    <button class="badge bg-success px-3 py-2 border-0"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#updateModal{{ $v->id }}">
                                                         <i class="bi bi-pencil-fill"></i>
                                                     </button>
-                                                    <a href="#" class="badge bg-warning text-decoration-none"><i
-                                                            class="bi bi-ticket-detailed-fill"></i>
-                                                    </a>
                                                     <form action="{{ route('vehicles-data.destroy', $v->id) }}"
                                                         method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit"
-                                                            class="badge bg-danger border-0 text-decoration-none"
+                                                        <button type="submit" class="badge bg-danger  px-3 py-2 border-0"
                                                             onclick="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?')">
                                                             <i class="bi bi-trash-fill"></i>
                                                         </button>

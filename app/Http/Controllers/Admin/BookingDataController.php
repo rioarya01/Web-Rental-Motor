@@ -33,4 +33,15 @@ class BookingDataController extends Controller
 
         return redirect()->route('booking.index')->with('success', 'Booking status updated successfully.');
     }
+    public function cancel($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $cancelledStatus = BookingStatus::where('name', 'pending_payment')->first();
+
+        $booking->booking_status_id = $cancelledStatus->id;
+
+        $booking->save();
+
+        return redirect()->route('booking.index')->with('success', 'Booking cancelled successfully.');
+    }
 }

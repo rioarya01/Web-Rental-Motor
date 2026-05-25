@@ -33,7 +33,7 @@ class Booking extends Model
             'pending_payment' => 'Belum Bayar',
             'paid' => 'Sudah Bayar',
             'payment_failed' => 'Pembayaran Gagal',
-            'canceled' => 'Dibatalkan',
+            'cancelled' => 'Dibatalkan',
             default => '-',
         };
     }
@@ -43,7 +43,7 @@ class Booking extends Model
             'pending_payment' => 'bg-light text-secondary border',
             'paid' => 'bg-success-light text-success border border-success',
             'payment_failed' => 'bg-danger-light text-danger border border-danger',
-            'canceled' => 'bg-primary text-white',
+            'cancelled' => 'bg-warning text-white border border-warning',
             default => 'bg-secondary text-white',
         };
     }

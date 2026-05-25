@@ -34,7 +34,7 @@
                                     <thead class="table-borderless">
                                         <tr>
                                             <th scope="col">No</th>
-                                            <th scope="col">Nama Lengkap</th>
+                                            <th scope="col">Nama Customer</th>
                                             <th scope="col">Username</th>
                                             <th scope="col">Email</th>
                                             <th scope="col">Whatsapp</th>
@@ -50,16 +50,18 @@
                                                 <td>{{ $c->email }}</td>
                                                 <td>{{ $c->no_telp }}</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                    <button class="badge bg-primary px-3 py-2 border-0"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#editCustomerModal{{ $c->id }}">
-                                                        Edit
+                                                        <i class="bi bi-pencil-fill"></i>
                                                     </button>
                                                     <form action="{{ route('customers.destroy', $c->id) }}" method="POST"
                                                         style="display: inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure?')">Delete</button>
+                                                        <button type="submit" class="badge bg-danger px-3 py-2 border-0"
+                                                            onclick="return confirm('Are you sure?')"><i
+                                                                class="bi bi-trash-fill"></i></button>
                                                     </form>
                                                 </td>
                                             </tr>
