@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\UserMiddleware;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
@@ -10,6 +11,12 @@ use Illuminate\Http\Request;
 
 class VehiclesController extends Controller
 {
+    public static function middleware(): array
+    {
+        return [
+            'user' => UserMiddleware::class,
+        ];
+    }
     public function index(Request $request)
     {
         // Filter

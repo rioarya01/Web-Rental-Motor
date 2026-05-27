@@ -70,7 +70,10 @@
                                     <!-- Status -->
                                     <div class="text-center">
                                         <small class="text-muted d-block d-md-none" style="font-size: 11px;">Status</small>
-                                        @if ($booking->booking_status_id == 1)
+                                        <span class="badge rounded-pill {{ $booking->booking_status_badge }}">
+                                            {{ $booking->booking_status_label }}
+                                        </span>
+                                        {{-- @if ($booking->booking_status_id == 1)
                                             <span class="badge rounded-pill bg-light text-secondary border">Belum
                                                 bayar</span>
                                         @elseif ($booking->booking_status_id == 2)
@@ -83,7 +86,7 @@
                                         @else
                                             <span class="badge rounded-pill bg-secondary">Status
                                                 {{ $booking->booking_status_id }}</span>
-                                        @endif
+                                        @endif --}}
                                     </div>
 
                                     <!-- Harga -->
@@ -183,19 +186,9 @@
                                                 </div>
                                                 <div class="col-6 col-md-3">
                                                     <small class="text-muted d-block mb-1">Status</small>
-                                                    @if ($booking->booking_status_id == 1)
-                                                        <span
-                                                            class="badge rounded-pill bg-light text-secondary border px-3 py-2">Pending</span>
-                                                    @elseif ($booking->booking_status_id == 2)
-                                                        <span
-                                                            class="badge rounded-pill bg-success-light text-success border border-success px-3 py-2">Dibayar</span>
-                                                    @elseif ($booking->booking_status_id == 7)
-                                                        <span
-                                                            class="badge rounded-pill bg-danger-light text-danger border border-danger px-3 py-2">Batal</span>
-                                                    @else
-                                                        <span class="badge rounded-pill bg-secondary px-3 py-2">Status
-                                                            {{ $booking->booking_status_id }}</span>
-                                                    @endif
+                                                    <span class="badge rounded-pill {{ $booking->booking_status_badge }}">
+                                                        {{ $booking->booking_status_label }}
+                                                    </span>
                                                 </div>
                                                 <div class="col-6 col-md-3 text-end">
                                                     <small class="text-muted d-block mb-1">Harga Total</small>

@@ -80,7 +80,19 @@
                                                     <small>{{ $message }} </small>
                                                 @enderror
                                             </div>
-
+                                            <div class="col-12">
+                                                <div class="input-group has-validation">
+                                                    <div class="input-group-text" id="inputGroupPrepend">
+                                                        <span class="bi-person"></span>
+                                                    </div>
+                                                    <input type="text" name="name" class="form-control"
+                                                        value="{{ old('name') }}" placeholder="Nama Lengkap">
+                                                    <div class="invalid-feedback">Please enter your name!</div>
+                                                </div>
+                                                @error('name')
+                                                    <small>{{ $message }} </small>
+                                                @enderror
+                                            </div>
                                             <div class="col-12">
                                                 <div class="input-group has-validation">
                                                     <div class="input-group-text" id="inputGroupPrepend">
@@ -122,7 +134,9 @@
                                             </div>
                                             <div class="col-12">
                                                 <p class="small mb-0">Sudah punya akun? <a
-                                                        href="{{ route('login') }}">Log in</a></p>
+                                                        href="{{ route('login') }}">Log
+                                                        in</a>
+                                                </p>
                                             </div>
                                         </div>
                                     </form>
