@@ -63,34 +63,28 @@
                     <li class="nav-item dropdown pe-3">
                         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                             data-bs-toggle="dropdown">
-                            <img src="{{ asset('nice/assets/img/profile-img.jpg') }}" alt="Profile"
+                            <img src="{{ Auth::user()->avatar_url ? asset('img/avatars/' . Auth::user()->avatar_url) : asset('nice/assets/img/profile-img.jpg') }}" alt="Profile"
                                 class="rounded-circle" width="38" height="38">
                             <span class="d-none d-md-block dropdown-toggle ps-2">
-                                K. Anderson
+                                {{ Auth::user()->name }}
                             </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end profile">
-                            <li class="dropdown-header">
-                                <h6>Kevin Anderson</h6>
-                                <span>Web Designer</span>
+                            <li class="dropdown-header text-start">
+                                <h6>{{ Auth::user()->name }}</h6>
+                                <span>{{ Auth::user()->email }}</span>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.edit') }}">
                                     <i class="bi bi-person"></i>
                                     <span class="ms-2">My Profile</span>
                                 </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <i class="bi bi-gear"></i>
-                                    <span class="ms-2">Account Settings</span>
-                                </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -123,9 +117,9 @@
                         <img src="{{ asset('nice/assets/img/profile-img.jpg') }}" alt="Profile"
                             class="rounded-circle me-3" width="50" height="50">
                         <div>
-                            <h6 class="mb-0">Kevin Anderson</h6>
+                            <h6 class="mb-0">{{ Auth::user()->name }}</h6>
                             <small class="text-muted">
-                                Web Designer
+                                {{ Auth::user()->email }}
                             </small>
                         </div>
                     </div>
