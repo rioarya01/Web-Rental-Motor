@@ -51,6 +51,12 @@
                  <i class="bi bi-card-checklist"></i><span>Data Konfirmasi Booking</span>
              </a>
          </li>
+         <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('laporan-booking.index') ? 'active' : '' }}"
+                 href="{{ route('laporan-booking.index') }}">
+                 <i class="bi bi-file-earmark-bar-graph"></i><span>Laporan Booking</span>
+             </a>
+         </li>
      </ul>
 
  </aside><!-- End Sidebar-->

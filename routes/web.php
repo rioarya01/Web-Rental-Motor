@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookingDataController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\LaporanBookingController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -32,11 +33,14 @@ Route::middleware('admin')->group(function () {
     Route::get('admin/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('admin/customers/store', [CustomerController::class, 'store'])->name('customers.store');
     Route::delete('admin/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
-    Route::put('admin/customers/{id}/', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('admin/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
     Route::get('admin/booking', [BookingDataController::class, 'index'])->name('booking.index');
     Route::put('admin/booking/{id}/update-status', [BookingDataController::class, 'updateStatus'])->name('booking.updateStatus');
-    ROute::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
+    Route::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
+    Route::get('admin/laporan-booking', [LaporanBookingController::class, 'index'])->name('laporan-booking.index');
 });
+
+
 Route::middleware('user')->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('home.user');
     Route::get('user/vehicles-list', [VehiclesController::class, 'index'])->name('vehicles-list.index');

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->default('user');
             $table->string('address')->nullable();
-            $table->string('ktp_number', 30)->nullable();
+            $table->string('ktp_number', 30)->unique()->nullable();
             $table->string('sim_number', 30)->nullable();
             $table->string('avatar_url')->nullable();
             $table->enum('status', ['active', 'non-active', 'blocked'])->default('active');

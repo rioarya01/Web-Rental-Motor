@@ -24,26 +24,19 @@ class CustomerController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'nullable|string|max:255',
-            'username' => 'nullable|string|max:255|unique:users,username',
-            'email' => 'nullable|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|unique:users,email',
             'no_telp' => 'nullable|string|max:20|unique:users,no_telp',
             'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:8',
-            'status' => 'nullable|in:active,non-active,blocked',
+            'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number',
+            'password' => 'required|string|min:8',
+            'status' => 'required|in:active,non-active,blocked',
         ]);
 
         User::create([
@@ -52,6 +45,7 @@ class CustomerController extends Controller
             'email' => $request->email,
             'no_telp' => $request->no_telp,
             'address' => $request->address,
+            'ktp_number' => $request->ktp_number,
             'password' => bcrypt($request->password),
             'role' => 'user',
             'status' => $request->status,
@@ -71,7 +65,7 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function edit(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $customer = User::findOrFail($id);
         $request->validate([
@@ -80,6 +74,7 @@ class CustomerController extends Controller
             'email' => 'nullable|email|unique:users,email,' . $customer->id,
             'no_telp' => 'nullable|string|max:20|unique:users,no_telp,' . $customer->id,
             'address' => 'nullable|string|max:255',
+            'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number,' . $customer->id,
             'password' => 'nullable|string|min:8',
             'status' => 'nullable|in:active,non-active,blocked',
         ]);
@@ -90,11 +85,15 @@ class CustomerController extends Controller
             'email' => $request->email,
             'no_telp' => $request->no_telp,
             'address' => $request->address,
+            'ktp_number' => $request->ktp_number,
             'password' => $request->password ? bcrypt($request->password) : $customer->password,
             'status' => $request->status,
         ]);
 
-        return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
+        if ($request) {
+            return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
+        }
+        return redirect()->route('customers.index')->with('error', 'Failed to update customer.');
     }
 
     /**
