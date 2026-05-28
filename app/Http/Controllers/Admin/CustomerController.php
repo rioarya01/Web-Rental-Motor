@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -46,7 +47,7 @@ class CustomerController extends Controller
             'no_telp' => $request->no_telp,
             'address' => $request->address,
             'ktp_number' => $request->ktp_number,
-            'password' => bcrypt($request->password),
+            'password' => Hash::make($request->password),
             'role' => 'user',
             'status' => $request->status,
         ]);
@@ -86,7 +87,7 @@ class CustomerController extends Controller
             'no_telp' => $request->no_telp,
             'address' => $request->address,
             'ktp_number' => $request->ktp_number,
-            'password' => $request->password ? bcrypt($request->password) : $customer->password,
+            'password' => Hash::make($request->password),
             'status' => $request->status,
         ]);
 
