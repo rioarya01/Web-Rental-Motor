@@ -7,6 +7,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,13 +28,38 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill($request->validated());
+
+        if ($request->filled('cropped_avatar')) {
+            $image = $request->cropped_avatar;
+
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+
+            $imageName = 'avatar-' . $user->id . '-' . Str::random(10) . '.png';
+
+            $avatarPath = public_path('img/avatars');
+
+            if (!File::exists($avatarPath)) {
+                File::makeDirectory($avatarPath, 0755, true);
+            }
+
+            File::put($avatarPath . '/' . $imageName, base64_decode($image));
+
+            if ($user->avatar_url && File::exists(public_path('img/avatars/' . $user->avatar_url))) {
+                File::delete(public_path('img/avatars/' . $user->avatar_url));
+            }
+
+            $user->avatar_url = $imageName;
         }
 
-        $request->user()->save();
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

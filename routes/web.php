@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VehiclesController;
@@ -60,4 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::put('/profile/password', [PasswordController::class, 'update'])->name('profile.password.update');
 });
