@@ -95,7 +95,7 @@
     </main>
     <!-- Add Customer Modal -->
     <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
@@ -104,14 +104,17 @@
                 <form action="{{ route('customers.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        {{-- GLOBAL ERROR --}}
+                        {{-- GLOBAL ERROR ALERT --}}
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Validation Error!</strong>
+                                <ul class="mb-0 mt-2">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
+
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                         @endif
 
@@ -158,16 +161,6 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control  @error('password') is-invalid @enderror"
-                                    id="password" name="password" value="{{ old('password') }}" required>
-                                @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
                                 <label for="ktp_number" class="form-label">KTP</label>
                                 <input type="text" class="form-control  @error('ktp_number') is-invalid @enderror"
                                     id="ktp_number" name="ktp_number" value="{{ old('ktp_number') }}" required>
@@ -183,7 +176,7 @@
                                     name="status" required>
 
                                     <option value="">
-                                        Select Status
+                                        -- Select Status --
                                     </option>
 
                                     <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>
@@ -214,6 +207,16 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control  @error('password') is-invalid @enderror"
+                                    id="password" name="password" value="{{ old('password') }}" required>
+                                @error('password')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -230,7 +233,7 @@
         <div class="modal fade" id="editCustomerModal{{ $c->id }}" tabindex="-1"
             aria-labelledby="editCustomerModalLabel{{ $c->id }}" aria-hidden="true">
 
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <div class="modal-header">
@@ -248,14 +251,17 @@
 
                         <div class="modal-body">
 
-                            {{-- GLOBAL ERROR --}}
-                            @if ($errors->any() && old('edit_id') == $c->id)
-                                <div class="alert alert-danger">
-                                    <ul class="mb-0">
+                            {{-- GLOBAL ERROR ALERT --}}
+                            @if ($errors->any())
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Validation Error!</strong>
+                                    <ul class="mb-0 mt-2">
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </ul>
+
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                             @endif
 
@@ -344,26 +350,6 @@
                                     @endif
                                 </div>
 
-                                {{-- PASSWORD --}}
-                                <div class="col-md-6 mb-3">
-                                    <label for="password{{ $c->id }}" class="form-label">
-                                        Password
-                                    </label>
-
-                                    <input type="password"
-                                        class="form-control @if (old('edit_id') == $c->id) @error('password') is-invalid @enderror @endif"
-                                        id="password{{ $c->id }}" name="password"
-                                        placeholder="Leave blank to keep current password">
-
-                                    @if (old('edit_id') == $c->id)
-                                        @error('password')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    @endif
-                                </div>
-
                                 {{-- KTP --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="ktp_number{{ $c->id }}" class="form-label">
@@ -439,6 +425,26 @@
                                     @endif
                                 </div>
 
+                                {{-- PASSWORD --}}
+                                <div class="col-md-12 mb-3">
+                                    <label for="password{{ $c->id }}" class="form-label">
+                                        Password
+                                    </label>
+
+                                    <input type="password"
+                                        class="form-control @if (old('edit_id') == $c->id) @error('password') is-invalid @enderror @endif"
+                                        id="password{{ $c->id }}" name="password"
+                                        placeholder="Leave blank to keep current password">
+
+                                    @if (old('edit_id') == $c->id)
+                                        @error('password')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    @endif
+                                </div>
+                                \
                             </div>
                         </div>
 
@@ -459,6 +465,20 @@
         </div>
     @endforeach
 @endsection
+
+{{-- AUTO OPEN ADD MODAL --}}
+@if ($errors->any() && !old('edit_id'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            let modal = new bootstrap.Modal(
+                document.getElementById('addCustomerModal')
+            );
+
+            modal.show();
+        });
+    </script>
+@endif
 {{-- AUTO OPEN EDIT MODAL IF VALIDATION ERROR --}}
 @if ($errors->any() && old('edit_id'))
     <script>
@@ -471,20 +491,6 @@
             );
 
             editModal.show();
-        });
-    </script>
-@endif
-
-{{-- AUTO OPEN ADD MODAL --}}
-@if ($errors->any() && !old('edit_id'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            let modal = new bootstrap.Modal(
-                document.getElementById('addCustomerModal')
-            );
-
-            modal.show();
         });
     </script>
 @endif

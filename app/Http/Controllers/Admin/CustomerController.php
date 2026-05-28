@@ -29,16 +29,31 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'no_telp' => 'nullable|string|max:20|unique:users,no_telp',
-            'address' => 'nullable|string|max:255',
-            'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number',
-            'password' => 'required|string|min:8',
-            'status' => 'required|in:active,non-active,blocked',
-        ]);
+        $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255|unique:users,username',
+                'email' => 'required|email|unique:users,email',
+                'no_telp' => 'nullable|string|max:20|unique:users,no_telp',
+                'address' => 'nullable|string|max:255',
+                'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number',
+                'password' => 'required|string|min:8',
+                'status' => 'required|in:active,non-active,blocked',
+            ],
+            [
+                'name.required' => 'Nama wajib diisi.',
+                'username.required' => 'Username wajib diisi.',
+                'username.unique' => 'Username sudah digunakan.',
+                'email.required' => 'Email wajib diisi.',
+                'email.email' => 'Format email tidak valid.',
+                'email.unique' => 'Email sudah digunakan.',
+                'no_telp.unique' => 'Nomor telepon sudah digunakan.',
+                'ktp_number.unique' => 'Nomor KTP sudah digunakan.',
+                'password.required' => 'Password wajib diisi.',
+                'password.min' => 'Password minimal 8 karakter.',
+                'status.required' => 'Status wajib diisi.',
+            ]
+        );
 
         User::create([
             'name' => $request->name,
@@ -56,29 +71,32 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
         $customer = User::findOrFail($id);
-        $request->validate([
-            'name' => 'nullable|string|max:255',
-            'username' => 'nullable|string|max:255|unique:users,username,' . $customer->id,
-            'email' => 'nullable|email|unique:users,email,' . $customer->id,
-            'no_telp' => 'nullable|string|max:20|unique:users,no_telp,' . $customer->id,
-            'address' => 'nullable|string|max:255',
-            'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number,' . $customer->id,
-            'password' => 'nullable|string|min:8',
-            'status' => 'nullable|in:active,non-active,blocked',
-        ]);
+        $request->validate(
+            [
+                'name' => 'nullable|string|max:255',
+                'username' => 'nullable|string|max:255|unique:users,username,' . $customer->id,
+                'email' => 'nullable|email|unique:users,email,' . $customer->id,
+                'no_telp' => 'nullable|string|max:20|unique:users,no_telp,' . $customer->id,
+                'address' => 'nullable|string|max:255',
+                'ktp_number' => 'nullable|string|max:20|unique:users,ktp_number,' . $customer->id,
+                'password' => 'nullable|string|min:8',
+                'status' => 'nullable|in:active,non-active,blocked',
+            ],
+            [
+                'username.unique' => 'Username sudah digunakan.',
+                'email.email' => 'Format email tidak valid.',
+                'email.unique' => 'Email sudah digunakan.',
+                'no_telp.unique' => 'Nomor telepon sudah digunakan.',
+                'ktp_number.unique' => 'Nomor KTP sudah digunakan.',
+                'password.min' => 'Password minimal 8 karakter.',
+                'status.in' => 'Status harus salah satu dari: active, non-active, blocked.',
+            ]
+        );
 
         $customer->update([
             'name' => $request->name,
