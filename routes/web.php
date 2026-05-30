@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookingDataController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\LaporanBookingController;
+use App\Http\Controllers\Admin\PaymentDiscountController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -22,6 +23,10 @@ Route::get('/', [LoginController::class, 'index'])->name('login');
 Route::post('/login-proses', [LoginController::class, 'login_proses'])->name('login-proses');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::middleware('auth')->group(function () {
+    Route::get('booking/{booking}/payment-proof', [App\Http\Controllers\User\BookingController::class, 'showPaymentProof'])->name('booking.showProof');
+});
+
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/register-proses', [RegisterController::class, 'register_proses'])->name('register-proses');
 
@@ -38,6 +43,16 @@ Route::middleware('admin')->group(function () {
     Route::get('admin/booking', [BookingDataController::class, 'index'])->name('booking.index');
     Route::put('admin/booking/{id}/update-status', [BookingDataController::class, 'updateStatus'])->name('booking.updateStatus');
     Route::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
+    Route::post('admin/booking/{id}/upload-proof', [BookingDataController::class, 'uploadProofAdmin'])->name('booking.adminUploadProof');
+    Route::put('admin/booking/{id}/reject-proof', [BookingDataController::class, 'rejectProof'])->name('booking.rejectProof');
+
+    Route::get('admin/payment-discount', [PaymentDiscountController::class, 'index'])->name('admin.payment-discount');
+    Route::post('admin/payment-discount/payment', [PaymentDiscountController::class, 'updatePayment'])->name('admin.payment-discount.updatePayment');
+    Route::post('admin/payment-discount/discount', [PaymentDiscountController::class, 'storeDiscount'])->name('admin.payment-discount.storeDiscount');
+    Route::put('admin/payment-discount/discount/{discount}', [PaymentDiscountController::class, 'updateDiscount'])->name('admin.payment-discount.updateDiscount');
+    Route::delete('admin/payment-discount/discount/{discount}', [PaymentDiscountController::class, 'destroyDiscount'])->name('admin.payment-discount.destroyDiscount');
+
+    Route::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
     Route::get('admin/laporan-booking', [LaporanBookingController::class, 'index'])->name('laporan-booking.index');
 });
 
@@ -49,6 +64,9 @@ Route::middleware('user')->group(function () {
     // Booking Routes
     Route::get('user/booking/history', [BookingController::class, 'history'])->name('booking.history');
     Route::get('user/booking/checkout/{booking}', [BookingController::class, 'checkout'])->name('booking.checkout');
+    Route::post('user/booking/{booking}/upload-proof', [BookingController::class, 'uploadProof'])->name('booking.uploadProof');
+    Route::get('user/booking/{booking}/edit', [BookingController::class, 'edit'])->name('booking.edit');
+    Route::put('user/booking/{booking}/update', [BookingController::class, 'update'])->name('booking.update');
     Route::get('user/booking/{vehicle:slug}', [BookingController::class, 'create'])->name('booking.create');
     Route::post('user/booking/{vehicle:slug}', [BookingController::class, 'store'])->name('booking.store');
 });

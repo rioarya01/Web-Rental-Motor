@@ -32,53 +32,122 @@ class VehicleSeeder extends Seeder
             $vehicleImages[] = sprintf('image_%02d.png', $number);
         }
 
-        $bikeModel = [
-            'Matic' => [
-                ['brand' => 'Honda', 'name' => 'Vario 150'],
-                ['brand' => 'Yamaha', 'name' => 'NMAX 155'],
-                ['brand' => 'Yamaha', 'name' => 'Aerox 155'],
-                ['brand' => 'Honda', 'name' => 'PCX 160'],
+        $vehicles = [
+            [
+                'category' => 'Matic',
+                'brand' => 'Honda',
+                'name' => 'Honda Vario 150',
+                'fuel' => 5.5,
+                'price' => 100000,
+                'status' => 'active',
+                'image' => 'image_01.png'
             ],
-            'Sport' => [
-                ['brand' => 'Yamaha', 'name' => 'R15'],
-                ['brand' => 'Yamaha', 'name' => 'R25'],
-                ['brand' => 'Yamaha', 'name' => 'R35'],
+            [
+                'category' => 'Matic',
+                'brand' => 'Yamaha',
+                'name' => 'Yamaha NMAX 155',
+                'fuel' => 7.1,
+                'price' => 150000,
+                'status' => 'active',
+                'image' => 'image_02.png'
             ],
-            'Bebek' => [
-                ['brand' => 'Honda', 'name' => 'Beat'],
-                ['brand' => 'Yamaha', 'name' => 'Fazzio'],
-                ['brand' => 'Yamaha', 'name' => 'Mio M3'],
+            [
+                'category' => 'Matic',
+                'brand' => 'Yamaha',
+                'name' => 'Yamaha Aerox 155',
+                'fuel' => 5.5,
+                'price' => 140000,
+                'status' => 'maintenance',
+                'image' => 'image_03.png'
             ],
-            'Trail' => [
-                ['brand' => 'Kawasaki', 'name' => 'Ninja 300'],
-                ['brand' => 'Kawasaki', 'name' => 'Ninja 650'],
+            [
+                'category' => 'Matic',
+                'brand' => 'Honda',
+                'name' => 'Honda PCX 160',
+                'fuel' => 8.1,
+                'price' => 160000,
+                'status' => 'active',
+                'image' => 'image_04.png'
             ],
-            'Naked Bike' => [
-                ['brand' => 'Suzuki', 'name' => 'Hayabusa'],
-                ['brand' => 'Suzuki', 'name' => 'GSX'],
+            [
+                'category' => 'Sport',
+                'brand' => 'Yamaha',
+                'name' => 'Yamaha R15',
+                'fuel' => 11.0,
+                'price' => 180000,
+                'status' => 'active',
+                'image' => 'image_05.png'
+            ],
+            [
+                'category' => 'Sport',
+                'brand' => 'Yamaha',
+                'name' => 'Yamaha R25',
+                'fuel' => 14.0,
+                'price' => 250000,
+                'status' => 'inactive',
+                'image' => 'image_06.png'
+            ],
+            [
+                'category' => 'Bebek',
+                'brand' => 'Honda',
+                'name' => 'Honda Supra X',
+                'fuel' => 4.0,
+                'price' => 80000,
+                'status' => 'active',
+                'image' => 'image_07.png'
+            ],
+            [
+                'category' => 'Bebek',
+                'brand' => 'Yamaha',
+                'name' => 'Yamaha Jupiter MX',
+                'fuel' => 4.2,
+                'price' => 85000,
+                'status' => 'active',
+                'image' => 'image_08.png'
+            ],
+            [
+                'category' => 'Trail',
+                'brand' => 'Kawasaki',
+                'name' => 'Kawasaki KLX 150',
+                'fuel' => 6.9,
+                'price' => 175000,
+                'status' => 'active',
+                'image' => 'image_09.png'
+            ],
+            [
+                'category' => 'Naked Bike',
+                'brand' => 'Suzuki',
+                'name' => 'Suzuki GSX-S150',
+                'fuel' => 11.0,
+                'price' => 165000,
+                'status' => 'active',
+                'image' => 'image_10.png'
             ],
         ];
 
-        for ($i = 0; $i < 10; $i++) {
-            $category = $categories->random();
-            $bike = $faker->randomElement($bikeModel[$category->name]);
-            $brand = $brands->where('name', $bike['brand'])->first() ?? $brands->random();
-            $name = $bike['brand'].' '.$bike['name'];
+        foreach ($vehicles as $index => $v) {
+            $brand = $brands->where('name', $v['brand'])->first();
+            $category = $categories->where('name', $v['category'])->first();
+
+            if (!$brand || !$category) continue;
+
+            $slug = Str::slug($v['name']) . '-' . ($index + 1);
 
             Vehicle::updateOrCreate(
+                ['slug' => $slug],
                 [
                     'category_id' => $category->id,
                     'brand_id' => $brand->id,
-                    'code' => strtoupper($brand->name[0]).$faker->bothify('??###'),
-                    'name' => $name,
-                    'slug' => Str::slug($name).'-'.$faker->unique()->numberBetween(1, 9999),
-                    'plate_number' => $faker->regexify('[A-Z]{1,2} [0-9]{3,4} [A-Z]{1,2}'),
-                    'fuel_tank_capacity' => $faker->optional()->randomFloat(2, 3, 12),
-                    'description' => $faker->optional()->sentence(12),
-                    'price_per_day' => $faker->numberBetween(80000, 250000),
-                    'is_featured' => $faker->boolean(25),
-                    'operational_status' => $faker->randomElement(['active', 'inactive', 'maintenance']),
-                    'image' => $faker->randomElement($vehicleImages),
+                    'code' => strtoupper(substr($brand->name, 0, 1)) . rand(1000, 9999),
+                    'name' => $v['name'],
+                    'slug' => $slug,
+                    'plate_number' => 'B ' . rand(1000, 9999) . ' ABC',
+                    'fuel_tank_capacity' => $v['fuel'],
+                    'description' => 'Motor ' . $v['name'] . ' dalam kondisi prima, siap digunakan untuk perjalanan Anda.',
+                    'price_per_day' => $v['price'],
+                    'is_featured' => rand(0, 1),
+                    'operational_status' => $v['status'],
+                    'image' => $v['image'],
                 ]
             );
         }

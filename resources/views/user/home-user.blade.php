@@ -450,10 +450,16 @@
                                         class="btn btn-outline-primary rounded-3 w-100">
                                         View Details
                                     </a>
-                                    <a href="{{ route('booking.create', $vehicle->slug) }}"
-                                        class="btn btn-primary rounded-3 w-100">
-                                        Booking
-                                    </a>
+                                    @if($vehicle->operational_status == 'active')
+                                        <a href="{{ route('booking.create', $vehicle->slug) }}"
+                                            class="btn btn-primary rounded-3 w-100">
+                                            Booking
+                                        </a>
+                                    @else
+                                        <button class="btn btn-secondary rounded-3 w-100" disabled>
+                                            Tidak Tersedia
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>

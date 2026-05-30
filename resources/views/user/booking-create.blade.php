@@ -24,13 +24,16 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('booking.store', $vehicle->slug) }}" method="POST">
+                            <form action="{{ isset($booking) ? route('booking.update', $booking->id) : route('booking.store', $vehicle->slug) }}" method="POST">
                                 @csrf
+                                @if(isset($booking))
+                                    @method('PUT')
+                                @endif
                                 <div class="row mb-3">
                                     <label for="rent_start" class="col-sm-3 col-form-label">Tanggal & Jam Ambil</label>
                                     <div class="col-sm-9">
                                         <input type="datetime-local" class="form-control" id="rent_start" name="rent_start"
-                                            value="{{ old('rent_start', \Carbon\Carbon::tomorrow()->format('Y-m-d\T06:00')) }}"
+                                            value="{{ old('rent_start', isset($booking) ? \Carbon\Carbon::parse($booking->rent_start)->format('Y-m-d\TH:i') : \Carbon\Carbon::tomorrow()->format('Y-m-d\T06:00')) }}"
                                             required min="{{ \Carbon\Carbon::now()->addHours(24)->format('Y-m-d\TH:i') }}">
                                         <small class="text-muted d-block mt-1">* Pemesanan wajib <strong>minimal 1x24
                                                 jam</strong> sebelum waktu penggunaan.</small>
@@ -42,11 +45,11 @@
                                     <label for="duration_days" class="col-sm-3 col-form-label">Durasi Sewa</label>
                                     <div class="col-sm-9">
                                         <select class="form-select mb-1" id="duration_days" name="duration_days" required>
-                                            <option value="1">1 Hari</option>
-                                            <option value="2">2 Hari</option>
-                                            <option value="3">3 Hari</option>
-                                            <option value="4">4 Hari</option>
-                                            <option value="5">5 Hari</option>
+                                            <option value="1" {{ old('duration_days', $booking->duration_days ?? '') == '1' ? 'selected' : '' }}>1 Hari</option>
+                                            <option value="2" {{ old('duration_days', $booking->duration_days ?? '') == '2' ? 'selected' : '' }}>2 Hari</option>
+                                            <option value="3" {{ old('duration_days', $booking->duration_days ?? '') == '3' ? 'selected' : '' }}>3 Hari</option>
+                                            <option value="4" {{ old('duration_days', $booking->duration_days ?? '') == '4' ? 'selected' : '' }}>4 Hari</option>
+                                            <option value="5" {{ old('duration_days', $booking->duration_days ?? '') == '5' ? 'selected' : '' }}>5 Hari</option>
                                         </select>
                                         <small class="text-primary d-block fw-semibold mb-1">* 1 hari dihitung 24 jam.
                                             Waktu pengembalian menyesuaikan jam pengambilan.</small>
@@ -58,21 +61,21 @@
                                         Pengiriman</label>
                                     <div class="col-sm-9">
                                         <textarea class="form-control" id="pickup_address" name="pickup_address" rows="3" required
-                                            placeholder="Tuliskan alamat lengkap">{{ old('pickup_address') }}</textarea>
+                                            placeholder="Tuliskan alamat lengkap">{{ old('pickup_address', $booking->pickup_address ?? '') }}</textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="notes" class="col-sm-3 col-form-label">Catatan Tambahan
                                         (Opsional)</label>
                                     <div class="col-sm-9">
-                                        <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Cth: Helm 2, Jas hujan 2">{{ old('notes') }}</textarea>
+                                        <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Cth: Helm 2, Jas hujan 2">{{ old('notes', $booking->notes ?? '') }}</textarea>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-sm-9 offset-sm-3">
-                                        <button type="submit" class="btn btn-primary">Konfirmasi Pesanan</button>
-                                        <a href="{{ route('home.user') }}" class="btn btn-secondary">Batal</a>
+                                        <button type="submit" class="btn btn-primary">{{ isset($booking) ? 'Simpan Perubahan' : 'Konfirmasi Pesanan' }}</button>
+                                        <a href="{{ isset($booking) ? route('booking.checkout', $booking->id) : route('home.user') }}" class="btn btn-secondary">Batal</a>
                                     </div>
                                 </div>
                             </form>
@@ -102,6 +105,17 @@
                                 <span>Estimasi Durasi:</span>
                                 <span class="fw-semibold" id="duration_display">- Hari</span>
                             </div>
+                            <div class="d-flex justify-content-between mb-2 align-items-start">
+                                <div>
+                                    <span>Diskon:</span>
+                                    @if($activeDiscount)
+                                        <small class="text-muted d-block" style="font-size: 12px; line-height: 1.2;">
+                                            {{ $activeDiscount->name }} ({{ $activeDiscount->percentage }}%)
+                                        </small>
+                                    @endif
+                                </div>
+                                <span class="fw-semibold text-success text-end" id="discount_display">-Rp 0</span>
+                            </div>
                             <div class="d-flex justify-content-between">
                                 <span class="fw-bold text-primary">Estimasi Total:</span>
                                 <span class="fw-bold text-primary fs-5" id="total_display">Rp 0</span>
@@ -118,9 +132,11 @@
             const startInput = document.getElementById('rent_start');
             const durationInput = document.getElementById('duration_days');
             const durationDisplay = document.getElementById('duration_display');
+            const discountDisplay = document.getElementById('discount_display');
             const totalDisplay = document.getElementById('total_display');
             const endDateDisplay = document.getElementById('end_date_display');
             const pricePerDay = {{ $vehicle->price_per_day }};
+            const discountPercentage = {{ $activeDiscount ? $activeDiscount->percentage : 0 }};
 
             const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
@@ -130,9 +146,16 @@
             function calculateTotal() {
                 if (durationInput.value && startInput.value) {
                     const diffDays = parseInt(durationInput.value);
-                    const total = diffDays * pricePerDay;
+                    const baseTotal = diffDays * pricePerDay;
+                    const discountAmount = (baseTotal * discountPercentage) / 100;
+                    const total = baseTotal - discountAmount;
 
                     durationDisplay.textContent = diffDays + ' Hari';
+                    if (discountAmount > 0) {
+                        discountDisplay.textContent = '-Rp ' + discountAmount.toLocaleString('id-ID');
+                    } else {
+                        discountDisplay.textContent = '-';
+                    }
                     totalDisplay.textContent = 'Rp ' + total.toLocaleString('id-ID');
 
                     // Hitung End Date
@@ -150,6 +173,7 @@
                         `Batas Pengembalian: ${dayName}, ${date} ${monthName} ${startDate.getFullYear()} pukul ${hours}:${minutes}`;
                 } else {
                     durationDisplay.textContent = '- Hari';
+                    discountDisplay.textContent = '-Rp 0';
                     totalDisplay.textContent = 'Rp 0';
                     endDateDisplay.textContent = 'Batas Pengembalian: -';
                 }

@@ -44,7 +44,6 @@
 </head>
 
 <body class="hold-transition layout-top-nav">
-
     @if (auth()->user()->role == 'user')
         @include('layouts.topbarUser')
     @endif

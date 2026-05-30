@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             FeatureSeeder::class,
             VehicleFeatureSeeder::class,
+            PaymentSettingSeeder::class,
+            DiscountSeeder::class,
         ]);
     }
 }

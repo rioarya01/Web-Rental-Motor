@@ -49,21 +49,18 @@
                                                 <td>{{ $b->vehicle->name }}</td>
                                                 <td>{{ $b->user->email }}</td>
                                                 <td>{{ $b->user->no_telp }}</td>
-                                                @if ($b->booking_status_id == '1')
-                                                    <td class="fw-bold text-danger">Rp
-                                                        {{ number_format($b->total_amount, 0, ',', '.') }}
-                                                    </td>
-                                                @elseif ($b->booking_status_id == '2')
-                                                    <td class="fw-bold text-success">Rp
-                                                        {{ number_format($b->total_amount, 0, ',', '.') }}
-                                                    </td>
-                                                @endif
+                                                <td class="fw-bold {{ $b->booking_status_id == '2' ? 'text-success' : 'text-danger' }}">Rp
+                                                    {{ number_format($b->total_amount, 0, ',', '.') }}
+                                                </td>
                                                 <td>
                                                     <span class="badge rounded-pill {{ $b->booking_status_badge }}">
                                                         {{ $b->booking_status_label }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">
+                                                <td class="text-center d-flex justify-content-center gap-2">
+                                                    <button type="button" class="badge bg-primary px-3 py-2 border-0" data-bs-toggle="modal" data-bs-target="#proofModal{{ $b->id }}">
+                                                        <i class="bi bi-wallet2 fs-5"></i>
+                                                    </button>
                                                     @if ($b->booking_status_id == '1')
                                                         <form action="{{ route('booking.updateStatus', $b->id) }}"
                                                             method="POST">
@@ -87,6 +84,84 @@
                                                     @endif
                                                 </td>
                                             </tr>
+
+                                            <!-- Modal Bukti Bayar -->
+                                            <div class="modal fade" id="proofModal{{ $b->id }}" tabindex="-1" aria-labelledby="proofModalLabel{{ $b->id }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="proofModalLabel{{ $b->id }}">Bukti Pembayaran - {{ $b->booking_code }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            <div class="row text-start bg-light rounded p-2 mb-3 mx-0">
+                                                                <div class="col-12 mb-2">
+                                                                    <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt me-1"></i> Alamat Penjemputan / Pengiriman</small>
+                                                                    <span class="text-dark d-block" style="font-size: 13px;">{{ $b->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</span>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <small class="text-muted d-block mb-1"><i class="bi bi-chat-text me-1"></i> Catatan Tambahan</small>
+                                                                    <span class="text-dark d-block" style="font-size: 13px;">{{ $b->notes ?: 'Tidak ada catatan tambahan.' }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <hr style="border-style: dashed; opacity: 0.2;">
+                                                            @if($b->payment_proof)
+                                                                <a href="{{ route('booking.showProof', $b->id) }}" target="_blank" title="Klik untuk melihat ukuran penuh">
+                                                                    <img src="{{ route('booking.showProof', $b->id) }}" alt="Bukti Pembayaran" class="img-fluid rounded mb-3" style="max-height: 400px;">
+                                                                </a>
+                                                                <p class="text-muted mb-0">Diunggah pada pesanan ini.</p>
+                                                                @if($b->booking_status_id == '3')
+                                                                    <div class="alert alert-danger mt-2 mb-0 py-2 small text-start">
+                                                                        <strong>Ditolak:</strong> {{ $b->payment_notes ?? 'Tidak ada alasan' }}
+                                                                    </div>
+                                                                @endif
+                                                            @else
+                                                                <div class="alert alert-warning">
+                                                                    Belum ada bukti pembayaran yang diunggah.
+                                                                </div>
+                                                                <p class="text-muted small">Jika pengguna mengirimkan bukti via WhatsApp, Anda dapat mengunggahnya di sini sebagai arsip.</p>
+                                                                
+                                                                <form action="{{ route('booking.adminUploadProof', $b->id) }}" method="POST" enctype="multipart/form-data" class="text-start mt-3">
+                                                                    @csrf
+                                                                    <div class="mb-3">
+                                                                        <label for="payment_proof{{ $b->id }}" class="form-label">Unggah Bukti</label>
+                                                                        <input class="form-control form-control-sm" type="file" id="payment_proof{{ $b->id }}" name="payment_proof" accept="image/*" required>
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Bukti Pembayaran</button>
+                                                                </form>
+                                                            @endif
+                                                        </div>
+                                                        <div class="modal-footer justify-content-between flex-wrap">
+                                                            @if ($b->booking_status_id == '1')
+                                                                <div class="w-100 mb-2">
+                                                                    <div class="collapse" id="collapseReject{{ $b->id }}">
+                                                                        <form action="{{ route('booking.rejectProof', $b->id) }}" method="POST" class="text-start mb-2">
+                                                                            @csrf
+                                                                            @method('PUT')
+                                                                            <label class="form-label text-danger" style="font-size: 13px;">Alasan Penolakan (wajib)</label>
+                                                                            <textarea class="form-control mb-2" name="payment_notes" rows="2" placeholder="Contoh: Bukti buram, nominal transfer tidak sesuai..." required></textarea>
+                                                                            <button type="submit" class="btn btn-danger btn-sm w-100">Kirim Penolakan</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseReject{{ $b->id }}" aria-expanded="false" {{ !$b->payment_proof ? 'disabled' : '' }}>Tolak Bukti</button>
+                                                                <form action="{{ route('booking.updateStatus', $b->id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="btn btn-success">Konfirmasi (Lunas)</button>
+                                                                </form>
+                                                            @elseif(in_array($b->booking_status_id, ['2', '3']))
+                                                                <form action="{{ route('booking.cancel', $b->id) }}" method="POST" class="w-100">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="btn btn-outline-secondary w-100" onclick="return confirm('Apakah Anda yakin ingin membatalkan keputusan ini? Status akan dikembalikan seperti semula.');">Batalkan Keputusan</button>
+                                                                </form>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- End Modal -->
                                         @endforeach
                                     </tbody>
                                 </table>

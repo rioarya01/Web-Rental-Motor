@@ -57,6 +57,12 @@
                  <i class="bi bi-file-earmark-bar-graph"></i><span>Laporan Booking</span>
              </a>
          </li>
+         <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('admin.payment-discount') ? 'active' : '' }}"
+                 href="{{ route('admin.payment-discount') }}">
+                 <i class="bi bi-wallet2"></i><span>Atur Diskon & Pembayaran</span>
+             </a>
+         </li>
      </ul>
 
  </aside><!-- End Sidebar-->

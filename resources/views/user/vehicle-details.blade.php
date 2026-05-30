@@ -171,9 +171,15 @@
                                 Rp{{ number_format($vehicle->price_per_day, 0, ',', '.') }}
                                 <small>/ hari</small>
                             </div>
-                            <button class="btn btn-primary btn-book">
-                                Booking
-                            </button>
+                            @if($vehicle->operational_status == 'active')
+                                <a href="{{ route('booking.create', $vehicle->slug) }}" class="btn btn-primary btn-book text-decoration-none">
+                                    Booking
+                                </a>
+                            @else
+                                <button class="btn btn-secondary btn-book" disabled>
+                                    Tidak Tersedia
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

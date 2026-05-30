@@ -123,6 +123,9 @@
                                                             {{ $booking->vehicle->name ?? 'Kendaraan Dihapus' }}</h5>
                                                         <small
                                                             class="text-muted">{{ $booking->vehicle->vehicle_category->name ?? 'Motor' }}</small>
+                                                        <div class="mt-1">
+                                                            <span class="badge bg-secondary"><i class="bi bi-credit-card-2-front me-1"></i>{{ $booking->vehicle->plate_number ?? '-' }}</span>
+                                                        </div>
                                                     </div>
                                                     @if ($booking->vehicle->image && file_exists(public_path('storage/' . $booking->vehicle->image)))
                                                         <img src="{{ asset('storage/' . $booking->vehicle->image) }}"
@@ -196,12 +199,58 @@
                                                         {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
                                                 </div>
                                             </div>
+
+                                            <div class="row mt-4 bg-light rounded p-3 mx-0">
+                                                <div class="col-md-6 mb-3 mb-md-0">
+                                                    <h6 class="fw-bold mb-1" style="font-size: 13px;"><i class="bi bi-geo-alt me-1"></i> Alamat Jemput / Antar</h6>
+                                                    <p class="text-muted mb-0" style="font-size: 13px;">{{ $booking->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6 class="fw-bold mb-1" style="font-size: 13px;"><i class="bi bi-chat-text me-1"></i> Catatan</h6>
+                                                    <p class="text-muted mb-0" style="font-size: 13px;">{{ $booking->notes ?: 'Tidak ada catatan tambahan.' }}</p>
+                                                </div>
+                                            </div>
+
+                                            @if ($booking->status->name == 'payment_failed')
+                                                <div class="alert alert-danger mt-4 mb-0" style="font-size: 13px;">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> <strong>Pembayaran ditolak:</strong><br>
+                                                    {{ $booking->payment_notes ?? 'Tidak ada alasan.' }}
+                                                </div>
+                                            @endif
                                         </div>
-                                        @if ($booking->booking_status_id == 1)
+                                        @if (in_array($booking->status->name, ['pending_payment', 'payment_failed']))
                                             <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                                @php
+                                                    if ($booking->status->name == 'payment_failed') {
+                                                        $btnText = 'Unggah Ulang Bukti (Ditolak)';
+                                                        $btnClass = 'btn-danger';
+                                                    } elseif ($booking->payment_proof) {
+                                                        $btnText = 'Cek Status Pembayaran';
+                                                        $btnClass = 'btn-info text-white';
+                                                    } else {
+                                                        $btnText = 'Lanjutkan Pembayaran';
+                                                        $btnClass = 'btn-primary';
+                                                    }
+                                                @endphp
                                                 <a href="{{ route('booking.checkout', $booking->id) }}"
-                                                    class="btn btn-primary w-100 py-2 fw-semibold"
-                                                    style="border-radius: 8px;">Lanjutkan Pembayaran</a>
+                                                    class="btn {{ $btnClass }} w-100 py-2 fw-semibold"
+                                                    style="border-radius: 8px;">{{ $btnText }}</a>
+                                                
+                                                @if($booking->payment_proof)
+                                                    <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank"
+                                                        class="btn btn-outline-secondary w-100 py-2 mt-2 fw-semibold"
+                                                        style="border-radius: 8px;">
+                                                        <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @elseif($booking->payment_proof)
+                                            <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                                <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank"
+                                                    class="btn btn-outline-secondary w-100 py-2 fw-semibold"
+                                                    style="border-radius: 8px;">
+                                                    <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
+                                                </a>
                                             </div>
                                         @endif
                                     </div>

@@ -123,12 +123,25 @@
                                 <p><strong>No. Whatsapp:</strong> {{ $b->user->no_telp }}</p>
                                 <p><strong>No. KTP:</strong> {{ $b->user->ktp_number }}</p>
                                 <p><strong>Alamat:</strong>
-                                    <textarea class="form-control" rows="3" readonly>{{ $b->user->address }}</textarea>
+                                    <textarea class="form-control" rows="3" readonly>{{ $b->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</textarea>
+                                </p>
+                                <p><strong>Catatan Tambahan:</strong>
+                                    <textarea class="form-control" rows="3" readonly>{{ $b->additional_notes ?: 'Tidak ada catatan tambahan.' }}</textarea>
                                 </p>
                             </div>
                             <div class="col-md-6">
                                 <h6>Informasi Booking</h6>
+                                <div class="mb-3 text-center bg-light p-2 rounded">
+                                    @if ($b->vehicle->image && file_exists(public_path('storage/' . $b->vehicle->image)))
+                                        <img src="{{ asset('storage/' . $b->vehicle->image) }}" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;">
+                                    @elseif ($b->vehicle->image && file_exists(public_path('img/vehicles/' . $b->vehicle->image)))
+                                        <img src="{{ asset('img/vehicles/' . $b->vehicle->image) }}" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;">
+                                    @else
+                                        <img src="{{ asset('img/default/defaultIMG.png') }}" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;">
+                                    @endif
+                                </div>
                                 <p><strong>Motor:</strong> {{ $b->vehicle->name }}</p>
+                                <p><strong>Plat Nomor:</strong> <span class="badge bg-secondary">{{ $b->vehicle->plate_number ?? '-' }}</span></p>
                                 <p><strong>Tanggal Booking:</strong> {{ $b->booking_date }}</p>
                                 <p><strong>Tanggal Mulai:</strong> {{ $b->rent_start }}</p>
                                 <p><strong>Tanggal Selesai:</strong> {{ $b->rent_end }}</p>

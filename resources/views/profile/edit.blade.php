@@ -4,7 +4,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
 
+@if(auth()->user()->role == 'admin')
+<main id="main" class="main" style="margin-top: 80px;">
+@else
 <main class="container" style="margin-top: 150px;">
+@endif
     {{-- Profile Updated Alert --}}
     @if (session('status') === 'profile-updated')
         <div 

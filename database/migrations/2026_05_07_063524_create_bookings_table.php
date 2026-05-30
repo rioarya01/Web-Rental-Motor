@@ -24,6 +24,8 @@ return new class extends Migration
             $table->decimal('discount_amount', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
             $table->foreignId('booking_status_id')->constrained('booking_statuses')->onDelete('cascade');
+            $table->string('payment_proof')->nullable();
+            $table->text('payment_notes')->nullable();
             $table->text('pickup_address')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

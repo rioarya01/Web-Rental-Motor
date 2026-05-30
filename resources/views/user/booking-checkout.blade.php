@@ -70,11 +70,14 @@
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm sticky-top" style="border-radius: 12px; top: 100px;">
                         <div class="card-body p-4">
-                            <div class="d-flex justify-content-between mb-4">
-                                <span class="text-muted">Durasi sewa : <span
-                                        class="fw-semibold text-dark">{{ $booking->duration_days }} hari</span></span>
-                                <a href="{{ route('booking.history') }}" class="text-primary text-decoration-none"
-                                    style="font-size: 14px;"><i class="bi bi-pencil"></i> Edit</a>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0">Durasi sewa : {{ $booking->duration_days }} hari</h6>
+                                @if(!$booking->payment_proof)
+                                    <a href="{{ route('booking.edit', $booking->id) }}"
+                                        class="text-primary text-decoration-none" style="font-size: 14px;">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                @endif
                             </div>
 
                             <div class="row mb-3">
@@ -91,6 +94,17 @@
                                         style="font-size: 14px;">{{ \Carbon\Carbon::parse($booking->rent_end)->translatedFormat('D, d M Y') }}</span>
                                     <span class="text-muted"
                                         style="font-size: 13px;">{{ \Carbon\Carbon::parse($booking->rent_end)->format('H:i') }}</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 mt-3">
+                                <div class="col-12 mb-2">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt me-1"></i> Alamat Penjemputan / Pengiriman</small>
+                                    <span class="text-dark d-block" style="font-size: 13px;">{{ $booking->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</span>
+                                </div>
+                                <div class="col-12">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-chat-text me-1"></i> Catatan Tambahan</small>
+                                    <span class="text-dark d-block" style="font-size: 13px;">{{ $booking->notes ?: 'Tidak ada catatan tambahan.' }}</span>
                                 </div>
                             </div>
 
@@ -129,9 +143,24 @@
                                     <span>Rp
                                         {{ number_format($booking->duration_days * $booking->price_per_day, 0, ',', '.') }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between mb-3 text-muted" style="font-size: 14px;">
-                                    <span>Diskon</span>
-                                    <span>-</span>
+                                <div class="d-flex justify-content-between mb-3 text-muted align-items-start" style="font-size: 14px;">
+                                    @php
+                                        $baseTotal = $booking->duration_days * $booking->price_per_day;
+                                        $percentage = $baseTotal > 0 && $booking->discount_amount > 0 ? round(($booking->discount_amount / $baseTotal) * 100) : 0;
+                                    @endphp
+                                    <div>
+                                        <span>Diskon</span>
+                                        @if($percentage > 0)
+                                            <small class="text-muted d-block" style="font-size: 12px; line-height: 1.2;">
+                                                {{ $activeDiscount ? $activeDiscount->name : 'Potongan Harga' }} ({{ $percentage }}%)
+                                            </small>
+                                        @endif
+                                    </div>
+                                    @if($booking->discount_amount > 0)
+                                        <span class="text-success text-end">-Rp {{ number_format($booking->discount_amount, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-end">-</span>
+                                    @endif
                                 </div>
                                 <hr style="opacity: 0.1;">
                                 <div class="d-flex justify-content-between mt-2">
@@ -141,8 +170,34 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary w-100 py-2 fw-semibold" style="border-radius: 8px;"
-                                data-bs-toggle="modal" data-bs-target="#paymentModal">Bayar Sekarang</button>
+                            @php
+                                if ($booking->status->name == 'paid') {
+                                    $btnText = 'Pembayaran Berhasil';
+                                    $btnClass = 'btn-success';
+                                    $btnIcon = 'bi-check-circle-fill';
+                                    $isModal = false;
+                                } elseif ($booking->status->name == 'payment_failed') {
+                                    $btnText = 'Unggah Ulang Bukti (Ditolak)';
+                                    $btnClass = 'btn-danger';
+                                    $btnIcon = 'bi-exclamation-circle';
+                                    $isModal = true;
+                                } elseif ($booking->payment_proof) {
+                                    $btnText = 'Menunggu Konfirmasi';
+                                    $btnClass = 'btn-info text-white';
+                                    $btnIcon = 'bi-clock-history';
+                                    $isModal = true;
+                                } else {
+                                    $btnText = 'Bayar Sekarang';
+                                    $btnClass = 'btn-primary';
+                                    $btnIcon = 'bi-wallet2';
+                                    $isModal = true;
+                                }
+                            @endphp
+                            
+                            <button class="btn {{ $btnClass }} w-100 py-2 fw-semibold" style="border-radius: 8px;"
+                                @if($isModal) data-bs-toggle="modal" data-bs-target="#paymentModal" @else disabled @endif>
+                                <i class="bi {{ $btnIcon }} me-1"></i> {{ $btnText }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -168,37 +223,93 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Bank BCA</span>
-                                <span class="fw-bold text-dark">0123456789</span>
+                                <span class="fw-bold text-dark">{{ $paymentSetting->bank_bca ?? '0123456789' }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Bank Mandiri</span>
-                                <span class="fw-bold text-dark">9876543210</span>
+                                <span class="fw-bold text-dark">{{ $paymentSetting->bank_mandiri ?? '9876543210' }}</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Atas Nama</span>
-                                <span class="fw-bold text-dark">Admin Rental Motor</span>
+                                <span class="fw-bold text-dark">{{ $paymentSetting->account_name ?? 'Admin Rental Motor' }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <p class="text-muted" style="font-size: 13px;">Setelah transfer, harap konfirmasi pembayaran Anda
-                        melalui WhatsApp Admin dengan menekan tombol di bawah ini.</p>
+                    @if($booking->status->name == 'payment_failed')
+                        <div class="alert alert-danger text-start mb-3" role="alert" style="font-size: 13px;">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Bukti pembayaran ditolak!</strong><br>
+                            Alasan: {{ $booking->payment_notes ?? 'Tidak ada alasan.' }}
+                        </div>
+                        @if($booking->payment_proof)
+                            <div class="text-center mb-3">
+                                <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank" title="Klik untuk melihat ukuran penuh">
+                                    <img src="{{ route('booking.showProof', $booking->id) }}" alt="Bukti Ditolak" class="img-fluid rounded shadow-sm border border-danger" style="max-height: 150px;">
+                                </a>
+                                <p class="text-danger mt-1 mb-0" style="font-size: 12px;">(Bukti yang ditolak)</p>
+                            </div>
+                        @endif
+                        <hr>
+                        <p class="text-dark fw-bold mb-2" style="font-size: 13px;">Silakan unggah ulang bukti yang benar:</p>
+                    @endif
 
-                    @php
-                        $waNumber = '6285735717807'; // Ganti dengan nomor WA Admin yang asli
-                        $waText = urlencode(
-                            "Halo Admin, saya ingin konfirmasi pembayaran untuk pesanan motor.\n\nKode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
-                                number_format($booking->total_amount, 0, ',', '.') .
-                                '*',
-                        );
-                    @endphp
+                    @if(!$booking->payment_proof || $booking->status->name == 'payment_failed')
+                        @if(!$booking->payment_proof && !$booking->payment_notes)
+                            <p class="text-muted" style="font-size: 13px;">Setelah transfer, harap unggah bukti pembayaran di bawah ini atau konfirmasi melalui WhatsApp Admin.</p>
+                        @endif
 
-                    <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
-                        class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
-                        <i class="bi bi-whatsapp me-2"></i> Konfirmasi via WhatsApp
-                    </a>
+                        <form action="{{ route('booking.uploadProof', $booking->id) }}" method="POST" enctype="multipart/form-data" class="mb-3 text-start">
+                            @csrf
+                            <div class="mb-2">
+                                <label for="payment_proof" class="form-label" style="font-size: 14px;">Upload Bukti Pembayaran</label>
+                                <input class="form-control form-control-sm" type="file" id="payment_proof" name="payment_proof" accept="image/*" required>
+                                @error('payment_proof')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-2" style="border-radius: 8px;">
+                                <i class="bi bi-upload me-2"></i> Unggah Bukti
+                            </button>
+                        </form>
+
+                        @php
+                            $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807'; 
+                            $waText = urlencode(
+                                "Halo Admin, saya ingin konfirmasi pembayaran untuk pesanan motor.\n\nKode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
+                                    number_format($booking->total_amount, 0, ',', '.') .
+                                    '*',
+                            );
+                        @endphp
+
+                        <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
+                            class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
+                            <i class="bi bi-whatsapp me-2"></i> Konfirmasi via WhatsApp
+                        </a>
+                    @else
+                        <div class="alert alert-success text-start" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i> Bukti pembayaran berhasil diunggah. Menunggu konfirmasi Admin.
+                        </div>
+                        <div class="text-center mb-3">
+                            <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank" title="Klik untuk melihat ukuran penuh">
+                                <img src="{{ route('booking.showProof', $booking->id) }}" alt="Bukti Pembayaran" class="img-fluid rounded shadow-sm" style="max-height: 250px;">
+                            </a>
+                        </div>
+                        <p class="text-muted" style="font-size: 13px;">Admin akan segera memverifikasi pembayaran Anda.</p>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
+    @if(session('success') || $errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalElement = document.getElementById('paymentModal');
+                if (modalElement) {
+                    var paymentModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    paymentModal.show();
+                }
+            });
+        </script>
+    @endif
 @endsection
