@@ -40,6 +40,12 @@
              </a>
          </li>
          <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('vehicle-category.index') ? 'active' : '' }}"
+                 href="{{ route('vehicle-category.index') }}">
+                 <i class="bi bi-tags"></i><span>Data Kategori & Merk</span>
+             </a>
+         </li>
+         <li class="nav-item">
              <a class="nav nav-link {{ request()->routeIs('customers.index') ? 'active' : '' }}"
                  href="{{ route('customers.index') }}">
                  <i class="bi bi-people"></i><span>Customers</span>

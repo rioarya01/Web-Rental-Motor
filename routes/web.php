@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\BookingDataController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\LaporanBookingController;
 use App\Http\Controllers\Admin\PaymentDiscountController;
+use App\Http\Controllers\Admin\VehicleBrandController;
+use App\Http\Controllers\Admin\VehicleCategoryController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -37,9 +39,21 @@ Route::middleware('admin')->group(function () {
     Route::put('admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
     Route::delete('admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
     Route::get('admin/customers', [CustomerController::class, 'index'])->name('customers.index');
+
+    Route::get('admin/category', [VehicleCategoryController::class, 'index'])->name('vehicle-category.index');
+    Route::post('admin/category/store', [VehicleCategoryController::class, 'store'])->name('vehicle-category.store');
+    Route::put('admin/category/{id}', [VehicleCategoryController::class, 'update'])->name('vehicle-category.update');
+    Route::delete('admin/category/{id}', [VehicleCategoryController::class, 'destroy'])->name('vehicle-category.destroy');
+
+    Route::get('admin/brand', [VehicleBrandController::class, 'index'])->name('vehicle-brand.index');
+    Route::post('admin/brand/store', [VehicleBrandController::class, 'store'])->name('vehicle-brand.store');
+    Route::put('admin/brand/{id}', [VehicleBrandController::class, 'update'])->name('vehicle-brand.update');
+    Route::delete('admin/brand/{id}', [VehicleBrandController::class, 'destroy'])->name('vehicle-brand.destroy');
+
     Route::post('admin/customers/store', [CustomerController::class, 'store'])->name('customers.store');
     Route::delete('admin/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::put('admin/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+
     Route::get('admin/booking', [BookingDataController::class, 'index'])->name('booking.index');
     Route::put('admin/booking/{id}/update-status', [BookingDataController::class, 'updateStatus'])->name('booking.updateStatus');
     Route::put('admin/booking/{id}/cancel', [BookingDataController::class, 'cancel'])->name('booking.cancel');
