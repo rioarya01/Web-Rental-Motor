@@ -1,3 +1,55 @@
+# Daftar Perubahan Sistem
+
+## User
+
+1. Pada halaman **Daftar Pesanan**, di dalam **modal Detail Pesanan**, tambahkan tombol atau link **Chat WhatsApp Admin** yang ditampilkan tepat di bawah tombol **Bukti Pembayaran**.
+2. Fitur chat WhatsApp hanya ditampilkan ketika status pesanan telah berubah menjadi **Paid**, sehingga pelanggan dapat langsung menghubungi admin terkait pesanan yang telah berhasil dibayar.
+
+## Admin
+
+### Dashboard
+
+1. Tambahkan kartu statistik yang menampilkan:
+    - Total pesanan dengan status **Pending**.
+    - Total pesanan dengan status **Paid**.
+
+2. Tambahkan fitur filter periode pendapatan pada tampilan **Total Pendapatan** dengan pilihan:
+    - Harian
+    - Bulanan
+    - Tahunan
+
+    Nominal pendapatan yang ditampilkan harus berubah secara dinamis sesuai periode filter yang dipilih.
+
+### Data Konfirmasi Booking
+
+1. Pada halaman **Data Konfirmasi Booking**, di dalam **modal Bukti Pembayaran**, tambahkan tombol atau link **Chat WhatsApp Customer**.
+2. Tombol chat hanya ditampilkan untuk pesanan dengan status **Paid**.
+3. Fitur ini digunakan agar admin dapat langsung mengirimkan pesan kepada customer bahwa pembayaran telah diverifikasi dan pesanan telah dikonfirmasi.
+
+### Pengaturan Diskon dan Pembayaran
+
+1. Tambahkan tabel database **Rekening Pembayaran** untuk menyimpan informasi rekening tujuan pembayaran.
+2. Buat fitur **CRUD (Create, Read, Update, Delete)** untuk data rekening pembayaran.
+3. Data rekening yang dikelola minimal mencakup:
+    - Nama Bank
+    - Nomor Rekening
+    - Nama Pemilik Rekening
+    - Status Aktif/Tidak Aktif
+
+### Pengaturan Diskon
+
+1. Pada modal **Tambah Diskon Baru**, tambahkan field **Target Diskon** berupa dropdown/select dengan pilihan:
+    - Kendaraan
+    - Brand Kendaraan
+    - Tipe Kendaraan
+
+2. Setelah admin memilih salah satu target diskon, tampilkan dropdown/select lanjutan yang menyesuaikan pilihan target:
+    - Jika memilih **Kendaraan**, tampilkan daftar seluruh kendaraan.
+    - Jika memilih **Brand Kendaraan**, tampilkan daftar seluruh brand kendaraan.
+    - Jika memilih **Tipe Kendaraan**, tampilkan daftar seluruh tipe kendaraan.
+
+3. Diskon yang dibuat hanya berlaku untuk target yang dipilih oleh admin.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

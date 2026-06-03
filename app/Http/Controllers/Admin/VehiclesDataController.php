@@ -123,9 +123,9 @@ class VehiclesDataController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('vehicles', 'public');
         }
-        if ($vehicle->image && Storage::disk('public')->exists($vehicle->image)) {
-            Storage::disk('public')->delete($vehicle->image);
-        }
+        // if ($vehicle->image && Storage::disk('public')->exists($vehicle->image)) {
+        //     Storage::disk('public')->delete($vehicle->image);
+        // }
 
         $vehicle->update([
             'category_id' => $request->category_id,
