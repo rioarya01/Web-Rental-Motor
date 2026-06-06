@@ -115,6 +115,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
+
                                         <div class="modal-body p-4 pt-2">
                                             <div class="row mb-4">
                                                 <div class="col-md-5 text-center text-md-start">
@@ -218,7 +219,8 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        @if (in_array($booking->status->name, ['pending_payment', 'payment_failed']))
+
+                                        @if (in_array($booking->status->name, ['paid', 'payment_failed', 'cancelled']))
                                             <div class="modal-footer border-0 pt-0 pb-4 px-4">
                                                 @php
                                                     if ($booking->status->name == 'payment_failed') {
@@ -243,13 +245,42 @@
                                                         <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
                                                     </a>
                                                 @endif
+
+                                                @php
+                                                    $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807'; 
+                                                    $waText = urlencode(
+                                                        "Halo Admin, saya ingin bertanya terkait pesanan dengan Kode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
+                                                            number_format($booking->total_amount, 0, ',', '.') .
+                                                            '*',
+                                                    );
+                                                @endphp
+
+                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
+                                                    class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
+                                                    <i class="bi bi-whatsapp me-2"></i> Tanya via WhatsApp
+                                                </a>
                                             </div>
+
                                         @elseif($booking->payment_proof)
                                             <div class="modal-footer border-0 pt-0 pb-4 px-4">
                                                 <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank"
                                                     class="btn btn-outline-secondary w-100 py-2 fw-semibold"
                                                     style="border-radius: 8px;">
                                                     <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
+                                                </a>
+                                                
+                                                @php
+                                                    $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807'; 
+                                                    $waText = urlencode(
+                                                        "Halo Admin, saya ingin konfirmasi pembayaran untuk pesanan motor.\n\nKode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
+                                                            number_format($booking->total_amount, 0, ',', '.') .
+                                                            '*',
+                                                    );
+                                                @endphp
+
+                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
+                                                    class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
+                                                    <i class="bi bi-whatsapp me-2"></i> Konfirmasi via WhatsApp
                                                 </a>
                                             </div>
                                         @endif

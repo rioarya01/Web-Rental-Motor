@@ -22,33 +22,59 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
-        $customers = User::where('role', 'user')->orderBy('id', 'desc')->paginate(10);
+        $customers = User::where('role', 'user')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         $totalCustomers = User::where('role', 'user')->count();
+
         $vehicles = Vehicle::all();
         $totalVehicles = Vehicle::count();
-        $bookings = Booking::with('vehicle', 'user')->orderBy('id', 'desc')->paginate(5);
-        $totalBookings = Booking::count();
-        // buatkan count total revenue dari booking yang sudah paid
-        // total paid
-        $totalPaid = Booking::whereHas('status', function ($query) {
-            $query->where('name', 'paid');
-        })->sum('total_amount');
 
-        // filter chart
+        $bookings = Booking::with('vehicle', 'user')
+            ->orderBy('id', 'desc')
+            ->paginate(5);
+
+        $totalBookings = Booking::count();
+
+        $totalPendingBookings = Booking::whereHas('status', function ($query) {
+            $query->where('name', 'pending_payment');
+        })->count();
+
+        $totalPaidBookings = Booking::whereHas('status', function ($query) {
+            $query->where('name', 'paid');
+        })->count();
+
+        // Filter Total Pendapatan Card
+        $revenueFilter = $request->revenue_filter ?? 'month';
+
+        $totalRevenueQuery = Booking::whereHas('status', function ($query) {
+            $query->where('name', 'paid');
+        });
+
+        if ($revenueFilter == 'day') {
+            $totalRevenueQuery->whereDate('created_at', now()->toDateString());
+        } elseif ($revenueFilter == 'year') {
+            $totalRevenueQuery->whereYear('created_at', now()->year);
+        } else {
+            $totalRevenueQuery->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year);
+        }
+
+        $totalRevenuePaid = $totalRevenueQuery->sum('total_amount');
+
+        // Filter Chart Pendapatan
         $filter = $request->filter ?? 'month';
 
-        $query = Booking::where('booking_status_id', 2);
+        $query = Booking::whereHas('status', function ($query) {
+            $query->where('name', 'paid');
+        });
 
-        // ========================
-        // Grafik Harian
-        // ========================
         if ($filter == 'day') {
-
             $revenues = $query->select(
                 DB::raw('DATE(created_at) as label'),
                 DB::raw('SUM(total_amount) as total')
             )
-                ->where('booking_status_id', 2)
                 ->groupBy('label')
                 ->orderBy('label')
                 ->get();
@@ -60,18 +86,11 @@ class AdminController extends Controller
                 $labels[] = date('d M', strtotime($revenue->label));
                 $totals[] = $revenue->total;
             }
-        }
-
-        // ========================
-        // Grafik Tahunan
-        // ========================
-        elseif ($filter == 'year') {
-
+        } elseif ($filter == 'year') {
             $revenues = $query->select(
                 DB::raw('YEAR(created_at) as label'),
                 DB::raw('SUM(total_amount) as total')
             )
-                ->where('booking_status_id', 2)
                 ->groupBy('label')
                 ->orderBy('label')
                 ->get();
@@ -83,18 +102,11 @@ class AdminController extends Controller
                 $labels[] = $revenue->label;
                 $totals[] = $revenue->total;
             }
-        }
-
-        // ========================
-        // Grafik Bulanan
-        // ========================
-        else {
-
+        } else {
             $revenues = $query->select(
                 DB::raw('MONTH(created_at) as label'),
                 DB::raw('SUM(total_amount) as total')
             )
-                ->where('booking_status_id', 2)
                 ->groupBy('label')
                 ->orderBy('label')
                 ->get();
@@ -115,10 +127,13 @@ class AdminController extends Controller
             'totalVehicles',
             'bookings',
             'totalBookings',
-            'totalPaid',
+            'totalPendingBookings',
+            'totalPaidBookings',
+            'totalRevenuePaid',
             'totals',
             'labels',
-            'filter'
+            'filter',
+            'revenueFilter'
         ));
     }
 }

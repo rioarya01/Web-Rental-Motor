@@ -144,17 +144,41 @@
                                                                         </form>
                                                                     </div>
                                                                 </div>
-                                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseReject{{ $b->id }}" aria-expanded="false" {{ !$b->payment_proof ? 'disabled' : '' }}>Tolak Bukti</button>
+
+                                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseReject{{ $b->id }}" aria-expanded="false" {{ !$b->payment_proof ? 'disabled' : '' }}>
+                                                                    Tolak Bukti
+                                                                </button>
+
                                                                 <form action="{{ route('booking.updateStatus', $b->id) }}" method="POST" class="d-inline">
                                                                     @csrf
                                                                     @method('PUT')
                                                                     <button type="submit" class="btn btn-success">Konfirmasi (Lunas)</button>
                                                                 </form>
+
                                                             @elseif(in_array($b->booking_status_id, ['2', '3']))
+                                                                @if ($b->booking_status_id == '2')
+                                                                    @php
+                                                                        $whatsappNumber = preg_replace('/[^0-9]/', '', $b->user->no_telp ?? '');
+
+                                                                        if (substr($whatsappNumber, 0, 1) == '0') {
+                                                                            $whatsappNumber = '62' . substr($whatsappNumber, 1);
+                                                                        }
+
+                                                                        $message = urlencode('Halo, pembayaran Anda telah diverifikasi dan pesanan telah dikonfirmasi. Silahkan segera datang ke lokasi. Terimakasih.');
+                                                                    @endphp
+
+                                                                    <a href="https://wa.me/{{ $whatsappNumber }}?text={{ $message }}" target="_blank" class="btn btn-success w-100 mb-2">
+                                                                        <i class="bi bi-whatsapp me-2"></i>
+                                                                        Chat WhatsApp Customer
+                                                                    </a>
+                                                                @endif
+
                                                                 <form action="{{ route('booking.cancel', $b->id) }}" method="POST" class="w-100">
                                                                     @csrf
                                                                     @method('PUT')
-                                                                    <button type="submit" class="btn btn-outline-secondary w-100" onclick="return confirm('Apakah Anda yakin ingin membatalkan keputusan ini? Status akan dikembalikan seperti semula.');">Batalkan Keputusan</button>
+                                                                    <button type="submit" class="btn btn-outline-secondary w-100" onclick="return confirm('Apakah Anda yakin ingin membatalkan keputusan ini? Status akan dikembalikan seperti semula.');">
+                                                                        Batalkan Keputusan
+                                                                    </button>
                                                                 </form>
                                                             @endif
                                                         </div>

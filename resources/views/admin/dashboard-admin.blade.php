@@ -44,22 +44,53 @@
                         <div class="col-xxl-4 col-md-6">
                             <div class="card info-card revenue-card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Total Pendapatan </h5>
+                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                        <h5 class="card-title mb-0">Total Pendapatan</h5>
 
-                                    <div class="d-flex align-items-center">
-                                        <div
-                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <form method="GET" action="{{ url()->current() }}">
+                                            @foreach(request()->except('revenue_filter', 'page') as $key => $value)
+                                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                            @endforeach
+
+                                            <select name="revenue_filter"
+                                                class="form-select form-select-sm"
+                                                onchange="this.form.submit()"
+                                                style="width: 115px;">
+                                                <option value="day" {{ $revenueFilter == 'day' ? 'selected' : '' }}>
+                                                    Harian
+                                                </option>
+                                                <option value="month" {{ $revenueFilter == 'month' ? 'selected' : '' }}>
+                                                    Bulanan
+                                                </option>
+                                                <option value="year" {{ $revenueFilter == 'year' ? 'selected' : '' }}>
+                                                    Tahunan
+                                                </option>
+                                            </select>
+                                        </form>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mt-3">
+                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                             <i class="bi bi-currency-dollar"></i>
                                         </div>
                                         <div class="ps-3">
-                                            <h6>Rp {{ number_format($totalPaid, 0, ',', '.') }}</h6>
+                                            <h6>Rp {{ number_format($totalRevenuePaid, 0, ',', '.') }}</h6>
+
+                                            <span class="text-muted small">
+                                                @if($revenueFilter == 'day')
+                                                    Hari ini
+                                                @elseif($revenueFilter == 'year')
+                                                    Tahun ini
+                                                @else
+                                                    Bulan ini
+                                                @endif
+                                            </span>
                                         </div>
                                     </div>
-
                                 </div>
-
                             </div>
-                        </div><!-- End Revenue Card -->
+                        </div>
+                        <!-- End Revenue Card -->
 
                         <!-- Customers Card -->
                         <div class="col-xxl-4 col-xl-12">
@@ -80,6 +111,46 @@
                             </div>
 
                         </div><!-- End Customers Card -->
+
+                        <!-- Total Order Card (Pending) -->
+                        <div class="col-md-6">
+                            <div class="card info-card order-pending-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Pesanan Tertunda</h5>
+
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-hourglass-split"></i>
+                                        </div>
+                                        <div class="ps-3">
+                                            <h6>{{ $totalPendingBookings }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- End Total Order Card (Pending) -->
+
+                        <!-- Total Order Card (Paid) -->
+                        <div class="col-md-6">
+                            <div class="card info-card order-paid-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Pesanan Terbayar</h5>
+
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-check-circle"></i>
+                                        </div>
+                                        <div class="ps-3">
+                                            <h6>{{ $totalPaidBookings }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- End Total Order Card (Paid) -->
 
                         <!-- Reports -->
                         <div class="col-12">
