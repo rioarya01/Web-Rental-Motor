@@ -221,18 +221,26 @@
 
                     <div class="card bg-light border-0 mb-4 text-start">
                         <div class="card-body p-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Bank BCA</span>
-                                <span class="fw-bold text-dark">{{ $paymentSetting->bank_bca ?? '0123456789' }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Bank Mandiri</span>
-                                <span class="fw-bold text-dark">{{ $paymentSetting->bank_mandiri ?? '9876543210' }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Atas Nama</span>
-                                <span class="fw-bold text-dark">{{ $paymentSetting->account_name ?? 'Admin Rental Motor' }}</span>
-                            </div>
+                            @forelse($paymentAccounts as $pa)
+                                <div class="{{ !$loop->last ? 'mb-3 border-bottom pb-2' : '' }}">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Bank</span>
+                                        <span class="fw-bold text-dark">{{ $pa->bank_name }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Nomor Rekening</span>
+                                        <span class="fw-bold text-dark">{{ $pa->account_number }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Atas Nama</span>
+                                        <span class="fw-bold text-dark">{{ $pa->account_name }}</span>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center text-muted">
+                                    <small>Belum ada rekening pembayaran yang ditambahkan. Silakan hubungi Admin.</small>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
 

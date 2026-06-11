@@ -193,6 +193,15 @@
                                                     <span class="badge rounded-pill {{ $booking->booking_status_badge }}">
                                                         {{ $booking->booking_status_label }}
                                                     </span>
+                                                    @if($booking->payment)
+                                                        <div class="mt-1">
+                                                            @if($booking->payment->method === 'cash')
+                                                                <small class="text-success fw-semibold"><i class="bi bi-cash-stack"></i> Cash</small>
+                                                            @else
+                                                                <small class="text-primary fw-semibold"><i class="bi bi-bank"></i> Transfer</small>
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div class="col-6 col-md-3 text-end">
                                                     <small class="text-muted d-block mb-1">Harga Total</small>

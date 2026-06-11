@@ -7,6 +7,8 @@ use App\Http\Middleware\UserMiddleware;
 use App\Models\Booking;
 use App\Models\Discount;
 use App\Models\PaymentSetting;
+use App\Models\PaymentAccount;
+use App\Models\BookingStatus;
 use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -247,6 +249,7 @@ class BookingController extends Controller
 
         $booking->load(['vehicle.vehicle_category', 'user']);
         $paymentSetting = PaymentSetting::first();
+        $paymentAccounts = PaymentAccount::where('is_active', true)->get();
 
         // Cari diskon untuk tampilan nama diskon
         $vehicle = $booking->vehicle;
@@ -271,7 +274,7 @@ class BookingController extends Controller
             ')
             ->first();
 
-        return view('user.booking-checkout', compact('booking', 'paymentSetting', 'activeDiscount'));
+        return view('user.booking-checkout', compact('booking', 'paymentSetting', 'activeDiscount', 'paymentAccounts'));
     }
 
     public function uploadProof(Request $request, Booking $booking)
@@ -300,7 +303,7 @@ class BookingController extends Controller
             // Simpan di disk local (private)
             $filePath = $file->storeAs('payments', $fileName, 'local');
 
-            $pendingStatus = \App\Models\BookingStatus::where('name', 'pending_payment')->first();
+            $pendingStatus = BookingStatus::where('name', 'pending_payment')->first();
 
             $booking->update([
                 'payment_proof' => $filePath,

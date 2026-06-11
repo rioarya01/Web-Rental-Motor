@@ -3,17 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\AdminMiddleware;
 use App\Models\Booking;
 use App\Models\BookingStatus;
+use App\Models\Payment;
+use App\Models\PaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BookingDataController extends Controller
 {
     public static function middleware(): array
     {
         return [
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'admin' => AdminMiddleware::class,
         ];
     }
 
@@ -23,7 +27,7 @@ class BookingDataController extends Controller
         return view('admin.bookingData', compact('booking'));
     }
 
-    public function updateStatus($id)
+    public function updateStatus(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
         $paidStatus = BookingStatus::where('name', 'paid')->first();
@@ -32,6 +36,29 @@ class BookingDataController extends Controller
         $booking->payment_notes = null; // Clear any previous rejection notes
 
         $booking->save();
+
+        // Check if payment already exists
+        $payment = Payment::where('booking_id', $booking->id)->first();
+        $paymentStatus = PaymentStatus::where('name', 'paid')->first();
+        $paymentMethod = $request->input('payment_method', 'manual_transfer');
+        
+        if (!$payment) {
+            Payment::create([
+                'booking_id' => $booking->id,
+                'payment_code' => 'MANUAL-' . strtoupper(Str::random(6)),
+                'method' => $paymentMethod,
+                'provider' => 'manual',
+                'amount' => $booking->total_amount,
+                'payment_status_id' => $paymentStatus ? $paymentStatus->id : null,
+                'paid_at' => now(),
+            ]);
+        } else {
+            $payment->update([
+                'method' => $paymentMethod,
+                'payment_status_id' => $paymentStatus ? $paymentStatus->id : null,
+                'paid_at' => now(),
+            ]);
+        }
 
         return redirect()->route('booking.index')->with('success', 'Booking status updated successfully.');
     }
@@ -44,7 +71,13 @@ class BookingDataController extends Controller
 
         $booking->save();
 
-        return redirect()->route('booking.index')->with('success', 'Booking cancelled successfully.');
+        // Delete associated payment if the decision is cancelled
+        $payment = Payment::where('booking_id', $booking->id)->first();
+        if ($payment) {
+            $payment->delete();
+        }
+
+        return redirect()->route('booking.index')->with('success', 'Keputusan dibatalkan. Status dikembalikan seperti semula.');
     }
 
     public function uploadProofAdmin(Request $request, $id)

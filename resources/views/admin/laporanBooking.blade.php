@@ -153,6 +153,15 @@
                                         {{ $b->booking_status_label }}
                                     </span>
                                 </p>
+                                @if($b->payment)
+                                <p><strong>Metode Pembayaran:</strong> 
+                                    @if($b->payment->method === 'cash')
+                                        <span class="text-success"><i class="bi bi-cash-stack"></i> Uang Tunai (Cash)</span>
+                                    @else
+                                        <span class="text-primary"><i class="bi bi-bank"></i> Transfer Bank</span>
+                                    @endif
+                                </p>
+                                @endif
                             </div>
                         </div>
                     </div>

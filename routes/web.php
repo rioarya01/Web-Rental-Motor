@@ -26,7 +26,7 @@ Route::post('/login-proses', [LoginController::class, 'login_proses'])->name('lo
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('booking/{booking}/payment-proof', [App\Http\Controllers\User\BookingController::class, 'showPaymentProof'])->name('booking.showProof');
+    Route::get('booking/{booking}/payment-proof', [BookingController::class, 'showPaymentProof'])->name('booking.showProof');
 });
 
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
@@ -62,6 +62,12 @@ Route::middleware('admin')->group(function () {
 
     Route::get('admin/payment-discount', [PaymentDiscountController::class, 'index'])->name('admin.payment-discount');
     Route::post('admin/payment-discount/payment', [PaymentDiscountController::class, 'updatePayment'])->name('admin.payment-discount.updatePayment');
+    
+    // Payment Account CRUD
+    Route::post('admin/payment-discount/payment-account', [PaymentDiscountController::class, 'storePaymentAccount'])->name('admin.payment-discount.storePaymentAccount');
+    Route::put('admin/payment-discount/payment-account/{paymentAccount}', [PaymentDiscountController::class, 'updatePaymentAccount'])->name('admin.payment-discount.updatePaymentAccount');
+    Route::delete('admin/payment-discount/payment-account/{paymentAccount}', [PaymentDiscountController::class, 'destroyPaymentAccount'])->name('admin.payment-discount.destroyPaymentAccount');
+
     Route::post('admin/payment-discount/discount', [PaymentDiscountController::class, 'storeDiscount'])->name('admin.payment-discount.storeDiscount');
     Route::put('admin/payment-discount/discount/{discount}', [PaymentDiscountController::class, 'updateDiscount'])->name('admin.payment-discount.updateDiscount');
     Route::delete('admin/payment-discount/discount/{discount}', [PaymentDiscountController::class, 'destroyDiscount'])->name('admin.payment-discount.destroyDiscount');

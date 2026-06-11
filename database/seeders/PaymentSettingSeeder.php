@@ -14,9 +14,6 @@ class PaymentSettingSeeder extends Seeder
     public function run(): void
     {
         PaymentSetting::create([
-            'bank_bca' => '0123456789',
-            'bank_mandiri' => '9876543210',
-            'account_name' => 'Admin Rental Motor',
             'whatsapp_number' => '6285735717807',
         ]);
     }

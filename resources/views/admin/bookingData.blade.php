@@ -103,6 +103,18 @@
                                                                     <small class="text-muted d-block mb-1"><i class="bi bi-chat-text me-1"></i> Catatan Tambahan</small>
                                                                     <span class="text-dark d-block" style="font-size: 13px;">{{ $b->notes ?: 'Tidak ada catatan tambahan.' }}</span>
                                                                 </div>
+                                                                @if($b->payment)
+                                                                <div class="col-12 mt-2 pt-2 border-top">
+                                                                    <small class="text-muted d-block mb-1"><i class="bi bi-credit-card me-1"></i> Metode Pembayaran</small>
+                                                                    <span class="text-dark d-block fw-bold" style="font-size: 13px;">
+                                                                        @if($b->payment->method === 'cash')
+                                                                            <span class="text-success"><i class="bi bi-cash-stack me-1"></i> Uang Tunai (Cash)</span>
+                                                                        @else
+                                                                            <span class="text-primary"><i class="bi bi-bank me-1"></i> Transfer Bank</span>
+                                                                        @endif
+                                                                    </span>
+                                                                </div>
+                                                                @endif
                                                             </div>
                                                             <hr style="border-style: dashed; opacity: 0.2;">
                                                             @if($b->payment_proof)
@@ -149,10 +161,17 @@
                                                                     Tolak Bukti
                                                                 </button>
 
-                                                                <form action="{{ route('booking.updateStatus', $b->id) }}" method="POST" class="d-inline">
+                                                                <form action="{{ route('booking.updateStatus', $b->id) }}" method="POST" class="w-100 text-start mt-3 p-3 border rounded bg-light">
                                                                     @csrf
                                                                     @method('PUT')
-                                                                    <button type="submit" class="btn btn-success">Konfirmasi (Lunas)</button>
+                                                                    <div class="mb-2">
+                                                                        <label for="payment_method{{ $b->id }}" class="form-label fw-bold" style="font-size: 13px;">Metode Pembayaran</label>
+                                                                        <select name="payment_method" id="payment_method{{ $b->id }}" class="form-select form-select-sm">
+                                                                            <option value="manual_transfer" selected>Transfer Bank</option>
+                                                                            <option value="cash">Uang Tunai (Cash)</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-success w-100">Konfirmasi Pembayaran (Lunas)</button>
                                                                 </form>
 
                                                             @elseif(in_array($b->booking_status_id, ['2', '3']))
