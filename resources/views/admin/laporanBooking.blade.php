@@ -122,6 +122,23 @@
                                 <p><strong>Email:</strong> {{ $b->user->email }}</p>
                                 <p><strong>No. Whatsapp:</strong> {{ $b->user->no_telp }}</p>
                                 <p><strong>No. KTP:</strong> {{ $b->user->ktp_number }}</p>
+                                <p><strong>Perlengkapan Kendaraan:</strong> 
+                                    @if(!empty($b->features_snapshot) && count($b->features_snapshot))
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach($b->features_snapshot as $feature)
+                                                <span class="badge bg-info-subtle text-info-emphasis border">
+                                                    {{ $feature['name'] ?? '-' }}
+                                                    {{ $feature['qty'] ?? 1 }}
+                                                    {{ $feature['unit'] ?? '' }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                    <span class="text-muted">
+                                        Tidak ada data perlengkapan.
+                                    </span>
+                                @endif
+                                </p>
                                 <p><strong>Alamat:</strong>
                                     <textarea class="form-control" rows="3" readonly>{{ $b->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</textarea>
                                 </p>

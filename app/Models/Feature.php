@@ -16,6 +16,16 @@ class Feature extends Model
 
     public function unit()
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
+
+    public function vehicles()
+    {
+        return $this->belongsToMany(
+            Vehicle::class,
+            'vehicles_features',
+            'feature_id',
+            'vehicle_id'
+        )->withPivot('qty');
     }
 }

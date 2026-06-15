@@ -26,6 +26,8 @@ class BookingController extends Controller
     }
     public function create(Vehicle $vehicle)
     {
+        $vehicle->load('features.unit');
+        
         $activeDiscount = Discount::where('is_active', true)
             ->where(function($query) use ($vehicle) {
                 $query->where('vehicle_id', $vehicle->id)
@@ -112,6 +114,20 @@ class BookingController extends Controller
             $bookingCode = 'BK-' . Str::upper(Str::random(2)) . rand(100, 999);
         } while (Booking::where('booking_code', $bookingCode)->exists());
 
+        $vehicle->load('features.unit');
+
+        $featuresSnapshot = $vehicle->features
+        ->map(function ($feature) {
+            return [
+                'id' => $feature->id,
+                'name' => $feature->name,
+                'qty' => (int) ($feature->pivot->qty ?? 1),
+                'unit' => $feature->unit?->name,
+            ];
+        })
+        ->values()
+        ->toArray();
+
         $booking = Booking::create([
             'booking_code' => $bookingCode,
             'vehicle_id' => $vehicle->id,
@@ -126,6 +142,7 @@ class BookingController extends Controller
             'booking_status_id' => 1, // pending_payment
             'pickup_address' => $request->pickup_address,
             'notes' => $request->notes,
+            'features_snapshot' => $featuresSnapshot,
         ]);
 
         return redirect()->route('booking.checkout', $booking->id);
@@ -331,7 +348,7 @@ class BookingController extends Controller
 
     public function history()
     {
-        $bookings = Booking::with('vehicle')
+        $bookings = Booking::with('vehicle', 'status')
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);

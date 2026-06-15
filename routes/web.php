@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\LaporanBookingController;
 use App\Http\Controllers\Admin\PaymentDiscountController;
 use App\Http\Controllers\Admin\VehicleBrandController;
 use App\Http\Controllers\Admin\VehicleCategoryController;
+use App\Http\Controllers\Admin\VehicleFeatureController;
+use App\Http\Controllers\Admin\VehicleUnitController;
 use App\Http\Controllers\Admin\VehiclesDataController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -38,18 +40,27 @@ Route::middleware('admin')->group(function () {
     Route::post('admin/vehicles/store', [VehiclesDataController::class, 'store'])->name('vehicles-data.store');
     Route::put('admin/vehicles/{id}', [VehiclesDataController::class, 'update'])->name('vehicles-data.update');
     Route::delete('admin/vehicles/{id}', [VehiclesDataController::class, 'destroy'])->name('vehicles-data.destroy');
-    Route::get('admin/customers', [CustomerController::class, 'index'])->name('customers.index');
-
+    
     Route::get('admin/category', [VehicleCategoryController::class, 'index'])->name('vehicle-category.index');
     Route::post('admin/category/store', [VehicleCategoryController::class, 'store'])->name('vehicle-category.store');
     Route::put('admin/category/{id}', [VehicleCategoryController::class, 'update'])->name('vehicle-category.update');
     Route::delete('admin/category/{id}', [VehicleCategoryController::class, 'destroy'])->name('vehicle-category.destroy');
-
+    
     Route::get('admin/brand', [VehicleBrandController::class, 'index'])->name('vehicle-brand.index');
     Route::post('admin/brand/store', [VehicleBrandController::class, 'store'])->name('vehicle-brand.store');
     Route::put('admin/brand/{id}', [VehicleBrandController::class, 'update'])->name('vehicle-brand.update');
     Route::delete('admin/brand/{id}', [VehicleBrandController::class, 'destroy'])->name('vehicle-brand.destroy');
 
+    Route::get('/admin/feature', [VehicleFeatureController::class, 'index'])->name('vehicle-feature.index');
+    Route::post('/admin/feature/store', [VehicleFeatureController::class, 'store'])->name('vehicle-feature.store');
+    Route::put('/admin/feature/{feature}', [VehicleFeatureController::class, 'update'])->name('vehicle-feature.update');
+    Route::delete('/admin/feature/{feature}', [VehicleFeatureController::class, 'destroy'])->name('vehicle-feature.destroy');
+
+    Route::post('/admin/unit', [VehicleUnitController::class, 'store'])->name('vehicle-unit.store');
+    Route::put('/admin/unit/{unit}', [VehicleUnitController::class, 'update'])->name('vehicle-unit.update');
+    Route::delete('/admin/unit/{unit}', [VehicleUnitController::class, 'destroy'])->name('vehicle-unit.destroy');
+    
+    Route::get('admin/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('admin/customers/store', [CustomerController::class, 'store'])->name('customers.store');
     Route::delete('admin/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::put('admin/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');

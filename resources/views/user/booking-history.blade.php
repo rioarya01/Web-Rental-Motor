@@ -211,6 +211,30 @@
                                             </div>
 
                                             <div class="row mt-4 bg-light rounded p-3 mx-0">
+                                                <div class="col-12 mb-4">
+                                                    <h6 class="fw-bold small mb-2"><i class="bi bi-wrench me-1"></i>Perlengkapan Kendaraan
+                                                    </h6>
+                                                    @if (!empty($booking->features_snapshot))
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            @foreach ($booking->features_snapshot as $feature)
+                                                                <span class="badge rounded bg-light text-dark border fw-normal px-2 py-1">
+                                                                    <span class="fw-semibold">
+                                                                        {{ $feature['name'] }}
+                                                                    </span>
+
+                                                                    <span class="text-secondary ms-1">
+                                                                        {{ $feature['qty'] ?? 1 }}
+                                                                        {{ $feature['unit'] ?? '' }}
+                                                                    </span>
+                                                                </span>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <p class="small text-muted mb-0">
+                                                            Tidak ada data perlengkapan.
+                                                        </p>
+                                                    @endif
+                                                </div>
                                                 <div class="col-md-6 mb-3 mb-md-0">
                                                     <h6 class="fw-bold mb-1" style="font-size: 13px;"><i class="bi bi-geo-alt me-1"></i> Alamat Jemput / Antar</h6>
                                                     <p class="text-muted mb-0" style="font-size: 13px;">{{ $booking->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</p>
@@ -229,11 +253,34 @@
                                             @endif
                                         </div>
 
-                                        @if (in_array($booking->status->name, ['paid', 'payment_failed', 'cancelled']))
-                                            <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                        @php
+                                            $statusName = $booking->status->name ?? null;
+
+                                            $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807';
+                                            $waNumber = preg_replace('/[^0-9]/', '', $waNumber);
+
+                                            if (str_starts_with($waNumber, '0')) {
+                                                $waNumber = '62' . substr($waNumber, 1);
+                                            }
+
+                                            $customerName = $booking->user->name ?? 'Customer';
+
+                                            $waText = urlencode(
+                                                "Halo Admin, saya ingin bertanya terkait pesanan saya.\n\n" .
+                                                "Kode Booking: *{$booking->booking_code}*\n" .
+                                                "Nama Pemesan: *{$customerName}*\n" .
+                                                "Status Pesanan: *{$booking->booking_status_label}*\n" .
+                                                "Total Pembayaran: *Rp " .
+                                                number_format($booking->total_amount, 0, ',', '.') .
+                                                "*"
+                                            );
+                                        @endphp
+
+                                        @if (in_array($statusName, ['pending_payment', 'payment_failed']))
+                                            <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex flex-column gap-2">
                                                 @php
-                                                    if ($booking->status->name == 'payment_failed') {
-                                                        $btnText = 'Unggah Ulang Bukti (Ditolak)';
+                                                    if ($statusName === 'payment_failed') {
+                                                        $btnText = 'Unggah Ulang Bukti Pembayaran';
                                                         $btnClass = 'btn-danger';
                                                     } elseif ($booking->payment_proof) {
                                                         $btnText = 'Cek Status Pembayaran';
@@ -243,53 +290,53 @@
                                                         $btnClass = 'btn-primary';
                                                     }
                                                 @endphp
+
                                                 <a href="{{ route('booking.checkout', $booking->id) }}"
                                                     class="btn {{ $btnClass }} w-100 py-2 fw-semibold"
-                                                    style="border-radius: 8px;">{{ $btnText }}</a>
-                                                
-                                                @if($booking->payment_proof)
-                                                    <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank"
-                                                        class="btn btn-outline-secondary w-100 py-2 mt-2 fw-semibold"
+                                                    style="border-radius: 8px;">
+                                                    {{ $btnText }}
+                                                </a>
+
+                                                @if ($booking->payment_proof)
+                                                    <a href="{{ route('booking.showProof', $booking->id) }}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="btn btn-outline-secondary w-100 py-2 fw-semibold"
                                                         style="border-radius: 8px;">
-                                                        <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
+                                                        <i class="bi bi-image me-2"></i>
+                                                        Lihat Bukti Pembayaran
                                                     </a>
                                                 @endif
 
-                                                @php
-                                                    $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807'; 
-                                                    $waText = urlencode(
-                                                        "Halo Admin, saya ingin bertanya terkait pesanan dengan Kode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
-                                                            number_format($booking->total_amount, 0, ',', '.') .
-                                                            '*',
-                                                    );
-                                                @endphp
-
-                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
-                                                    class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
-                                                    <i class="bi bi-whatsapp me-2"></i> Tanya via WhatsApp
+                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="btn btn-success w-100 py-2 fw-semibold"
+                                                    style="border-radius: 8px;">
+                                                    <i class="bi bi-whatsapp me-2"></i>
+                                                    Chat via WhatsApp
                                                 </a>
                                             </div>
+                                        @elseif ($statusName === 'paid')
+                                            <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex flex-column gap-2">
+                                                @if ($booking->payment_proof)
+                                                    <a href="{{ route('booking.showProof', $booking->id) }}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="btn btn-outline-primary w-100 py-2 fw-semibold"
+                                                        style="border-radius: 8px;">
+                                                        <i class="bi bi-image me-2"></i>
+                                                        Lihat Bukti Pembayaran
+                                                    </a>
+                                                @endif
 
-                                        @elseif($booking->payment_proof)
-                                            <div class="modal-footer border-0 pt-0 pb-4 px-4">
-                                                <a href="{{ route('booking.showProof', $booking->id) }}" target="_blank"
-                                                    class="btn btn-outline-secondary w-100 py-2 fw-semibold"
+                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="btn btn-success w-100 py-2 fw-semibold"
                                                     style="border-radius: 8px;">
-                                                    <i class="bi bi-image me-1"></i> Lihat Bukti Pembayaran
-                                                </a>
-                                                
-                                                @php
-                                                    $waNumber = $paymentSetting->whatsapp_number ?? '6285735717807'; 
-                                                    $waText = urlencode(
-                                                        "Halo Admin, saya ingin konfirmasi pembayaran untuk pesanan motor.\n\nKode Booking: *{$booking->booking_code}*\nNama Pemesan: *{$booking->user->name}*\nTotal Transfer: *Rp " .
-                                                            number_format($booking->total_amount, 0, ',', '.') .
-                                                            '*',
-                                                    );
-                                                @endphp
-
-                                                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank"
-                                                    class="btn btn-success w-100 py-2 fw-semibold" style="border-radius: 8px;">
-                                                    <i class="bi bi-whatsapp me-2"></i> Konfirmasi via WhatsApp
+                                                    <i class="bi bi-whatsapp me-2"></i>
+                                                    Chat via WhatsApp
                                                 </a>
                                             </div>
                                         @endif

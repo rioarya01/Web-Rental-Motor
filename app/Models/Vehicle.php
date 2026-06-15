@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Feature;
 
 class Vehicle extends Model
 {
@@ -44,6 +45,19 @@ class Vehicle extends Model
         };
     }
 
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return asset('img/default/defaultIMG.png');
+        }
+
+        if (str_starts_with($this->image, 'vehicles/')) {
+            return asset('storage/' . $this->image);
+        }
+
+        return asset('img/vehicles/' . $this->image);
+    }
+
     public function vehicle_category() // many to 1 relationship with VehicleCategory model
     {
         return $this->belongsTo(VehicleCategory::class, 'category_id');
@@ -56,6 +70,13 @@ class Vehicle extends Model
 
     public function features()
     {
-        return $this->belongsToMany(Feature::class, 'vehicle_features');
+        return $this->belongsToMany(
+            Feature::class,
+            'vehicle_features',
+            'vehicle_id',
+            'feature_id'
+        )
+            ->withPivot('qty')
+            ->withTimestamps();
     }
 }

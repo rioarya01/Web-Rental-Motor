@@ -57,8 +57,41 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="pickup_address" class="col-sm-3 col-form-label">Alamat Pengambilan /
-                                        Pengiriman</label>
+                                    <label class="col-sm-3 col-form-label">
+                                        Perlengkapan Kendaraan
+                                    </label>
+
+                                    <div class="col-sm-9">
+                                        @if($vehicle->features->isNotEmpty())
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach($vehicle->features as $feature)
+                                                    <span
+                                                        class="badge rounded-1 border border-primary-subtle bg-primary-subtle text-primary-emphasis text-wrap px-3 py-2 fw-normal">
+                                                        {{ $feature->name }}
+
+                                                        @if($feature->pivot->qty && $feature->unit)
+                                                            ({{ $feature->pivot->qty }} {{ $feature->unit->name }})
+                                                        @elseif($feature->pivot->qty)
+                                                            ({{ $feature->pivot->qty }})
+                                                        @elseif($feature->unit)
+                                                            ({{ $feature->unit->name }})
+                                                        @endif
+                                                    </span>
+                                                @endforeach
+                                            </div>
+
+                                            <small class="d-block mt-2 text-muted">
+                                                Perlengkapan di atas sudah termasuk dalam penyewaan kendaraan.
+                                            </small>
+                                        @else
+                                            <small class="text-muted">
+                                                Belum ada perlengkapan untuk kendaraan ini.
+                                            </small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="pickup_address" class="col-sm-3 col-form-label">Alamat Pengambilan / Pengiriman</label>
                                     <div class="col-sm-9">
                                         <textarea class="form-control" id="pickup_address" name="pickup_address" rows="3" required
                                             placeholder="Tuliskan alamat lengkap">{{ old('pickup_address', $booking->pickup_address ?? '') }}</textarea>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleCategory;
+use App\Models\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -21,11 +22,12 @@ class VehiclesDataController extends Controller
 
     public function index(Request $request)
     {
-        $query = Vehicle::with('vehicle_category', 'vehicle_brand')
+        $query = Vehicle::with('vehicle_category', 'vehicle_brand', 'features.unit')
             ->orderBy('id', 'desc');
 
         $category = VehicleCategory::all();
         $brands = VehicleBrand::all();
+        $features = Feature::orderBy('name')->get();
         // Search Filter
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -55,12 +57,13 @@ class VehiclesDataController extends Controller
             $query->where('price_per_day', '<=', $request->max_price);
         }
 
-        $vehicles = $query->paginate(5)->appends($request->except('page'));
+        $vehicles = $query->paginate(10)->appends($request->except('page'));
 
         return view('admin.vehiclesData', compact(
             'vehicles',
             'category',
-            'brands'
+            'brands',
+            'features'
         ));
     }
     public function store(Request $request)
@@ -76,12 +79,14 @@ class VehiclesDataController extends Controller
             'price_per_day' => 'required|numeric',
             'operational_status' => 'required|in:active,inactive,maintenance',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'feature_qty' => 'nullable|array',
+            'feature_qty.*' => 'nullable|integer|min:1',
         ]);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('vehicles', 'public');
         }
-        Vehicle::create([
+        $vehicle = Vehicle::create([
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
             'code' => $request->code,
@@ -94,6 +99,16 @@ class VehiclesDataController extends Controller
             'operational_status' => $request->operational_status,
             'image' => $image ?? null
         ]);
+
+        $syncData = [];
+
+        foreach ($request->features ?? [] as $featureId) {
+            $syncData[$featureId] = [
+                'qty' => $request->feature_qty[$featureId] ?? 1
+            ];
+        }
+
+        $vehicle->features()->sync($syncData);
 
         if ($request) {
             return redirect()->back()->with('success', 'Data berhasil ditambahkan');
@@ -118,6 +133,8 @@ class VehiclesDataController extends Controller
             'price_per_day' => 'required|numeric',
             'operational_status' => 'required|in:active,inactive,maintenance',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'feature_qty' => 'nullable|array',
+            'feature_qty.*' => 'nullable|integer|min:1',
         ]);
 
         if ($request->hasFile('image')) {
@@ -140,6 +157,16 @@ class VehiclesDataController extends Controller
             'operational_status' => $request->operational_status,
             'image' => $image ?? $vehicle->image
         ]);
+
+        $syncData = [];
+
+        foreach ($request->features ?? [] as $featureId) {
+            $syncData[$featureId] = [
+                'qty' => $request->feature_qty[$featureId] ?? 1
+            ];
+        }
+
+        $vehicle->features()->sync($syncData);
 
         if ($vehicle) {
             return redirect()->back()->with('success', 'Data berhasil diupdate');

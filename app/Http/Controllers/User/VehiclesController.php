@@ -79,7 +79,14 @@ class VehiclesController extends Controller
      */
     public function show(string $slug)
     {
-        $vehicle = Vehicle::where('slug', $slug)->firstOrFail();
+        $vehicle = Vehicle::with([
+            'vehicle_brand',
+            'vehicle_category',
+            'features.unit',
+        ])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
         return view('user.vehicle-details', compact('vehicle'));
     }
 

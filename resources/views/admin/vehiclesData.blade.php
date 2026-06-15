@@ -110,7 +110,7 @@
                                     <tbody>
                                         @forelse ($vehicles as $index => $v)
                                             <tr>
-                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $vehicles->firstItem() + $index }}</td>
                                                 <td>{{ $v->name }}</td>
                                                 <td>{{ $v->vehicle_category->name ?? 'N/A' }}</td>
                                                 <td>{{ $v->vehicle_brand->name ?? 'N/A' }}</td>
@@ -132,6 +132,13 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                    <button
+                                                        type="button"
+                                                        class="badge bg-primary px-3 py-2 border-0"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#detailModal{{ $v->id }}">
+                                                        <i class="bi bi-info-circle-fill"></i>
+                                                    </button>
                                                     <button class="badge bg-success px-3 py-2 border-0"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#updateModal{{ $v->id }}">
@@ -141,7 +148,7 @@
                                                         method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="badge bg-danger  px-3 py-2 border-0"
+                                                        <button type="submit" class="badge bg-danger px-3 py-2 border-0"
                                                             onclick="return confirm('Apakah Anda yakin ingin menghapus kendaraan ini?')">
                                                             <i class="bi bi-trash-fill"></i>
                                                         </button>
@@ -272,6 +279,53 @@
                             </div>
 
                             <div class="col-md-12 mb-3">
+                                <label class="form-label">Perlengkapan</label>
+
+                                <div class="border rounded p-3">
+                                    <div class="row">
+                                        @foreach($features as $feature)
+                                            <div class="col-md-6 mb-3">
+                                                <div class="border rounded p-2">
+
+                                                    <div class="form-check mb-2">
+                                                        <input
+                                                            class="form-check-input feature-checkbox"
+                                                            type="checkbox"
+                                                            name="features[]"
+                                                            value="{{ $feature->id }}"
+                                                            id="feature_add_{{ $feature->id }}">
+
+                                                        <label
+                                                            class="form-check-label"
+                                                            for="feature_add_{{ $feature->id }}">
+                                                            {{ $feature->name }}
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            class="form-control"
+                                                            name="feature_qty[{{ $feature->id }}]"
+                                                            placeholder="Jumlah"
+                                                            value="1">
+                                                        <span class="input-group-text">
+                                                            {{ $feature->unit->name ?? '-' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <small class="text-muted">
+                                    Pilih perlengkapan yang tersedia pada kendaraan ini.
+                                </small>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
                                 <label>Description</label>
                                 <textarea name="description" class="form-control" rows="4"></textarea>
                             </div>
@@ -381,6 +435,53 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12 mb-3">
+                                    <label class="form-label">Perlengkapan</label>
+
+                                    <div class="border rounded p-3">
+                                        <div class="row">
+                                            @foreach($features as $feature)
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="border rounded p-2">
+
+                                                        <div class="form-check mb-2">
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="features[]"
+                                                                value="{{ $feature->id }}"
+                                                                id="feature_{{ $v->id }}_{{ $feature->id }}"
+                                                                {{ $v->features->contains($feature->id) ? 'checked' : '' }}>
+
+                                                            <label
+                                                                class="form-check-label"
+                                                                for="feature_{{ $v->id }}_{{ $feature->id }}">
+                                                                {{ $feature->name }}
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="input-group">
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                class="form-control"
+                                                                name="feature_qty[{{ $feature->id }}]"
+                                                                value="{{ optional($v->features->find($feature->id))->pivot->qty ?? 1 }}">
+
+                                                            <span class="input-group-text">
+                                                                {{ $feature->unit->name ?? '-' }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Centang perlengkapan yang tersedia.
+                                    </small>
+                                </div>
+                                <div class="col-md-12 mb-3">
                                     <label>Description</label>
                                     <textarea name="description" class="form-control" rows="4">{{ $v->description }}</textarea>
                                 </div>
@@ -400,6 +501,143 @@
                 </div>
             </div>
         </div><!-- End Basic Modal-->
+    @endforeach
+
+    {{-- detail modal --}}
+    @foreach ($vehicles as $v)
+    <div class="modal fade" id="detailModal{{ $v->id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Detail Kendaraan
+                    </h5>
+                    <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        {{-- Gambar --}}
+                        <div class="col-md-5 text-center mb-3">
+
+                            @if ($v->image && file_exists(public_path('storage/' . $v->image)))
+                                <img src="{{ asset('storage/' . $v->image) }}" class="img-fluid rounded shadow-sm">
+                            @elseif ($v->image && file_exists(public_path('img/vehicles/' . $v->image)))
+                                <img src="{{ asset('img/vehicles/' . $v->image) }}" class="img-fluid rounded shadow-sm">
+                            @else
+                                <img src="{{ asset('img/default/defaultIMG.png') }}" class="img-fluid rounded shadow-sm">
+                            @endif
+
+                        </div>
+
+                        {{-- Informasi --}}
+                        <div class="col-md-7">
+
+                            <table class="table table-borderless table-sm">
+
+                                <tr>
+                                    <th width="40%">Kode</th>
+                                    <td>{{ $v->code }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Nama</th>
+                                    <td>{{ $v->name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Tipe</th>
+                                    <td>{{ $v->vehicle_category->name ?? '-' }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Merk</th>
+                                    <td>{{ $v->vehicle_brand->name ?? '-' }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Plat Nomor</th>
+                                    <td>{{ $v->plate_number }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Kapasitas BBM</th>
+                                    <td>{{ $v->fuel_tank_capacity }} Liter</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Harga / Hari</th>
+                                    <td>
+                                        Rp {{ number_format($v->price_per_day, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <span
+                                            style="{{ $v->operational_status_color }}"
+                                            class="badge">
+                                            {{ $v->operational_status_label }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    {{-- Perlengkapan --}}
+                    <div class="mt-3">
+                        <h6 class="fw-bold mb-2">Perlengkapan</h6>
+
+                        @if($v->features->count())
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($v->features as $feature)
+                                    <span class="badge bg-secondary">
+                                        {{ $feature->name }}
+                                        {{ $feature->pivot->qty }}
+                                        {{ $feature->unit->name ?? '' }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted mb-0">
+                                Belum ada perlengkapan.
+                            </p>
+                        @endif
+                    </div>
+
+                    {{-- Deskripsi --}}
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-2">Deskripsi</h6>
+
+                        <div class="border rounded p-3 bg-light">
+                            {{ $v->description ?: 'Tidak ada deskripsi.' }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Tutup
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
     @endforeach
 
 @endsection

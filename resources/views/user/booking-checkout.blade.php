@@ -99,6 +99,28 @@
 
                             <div class="row mb-3 mt-3">
                                 <div class="col-12 mb-2">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="bi bi-wrench me-1"></i> Perlengkapan Kendaraan
+                                    </small>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @forelse ($booking->features_snapshot ?? [] as $feature)
+                                            <div class="badge rounded bg-light text-dark border fw-normal px-2 py-1">
+                                                <span class="fw-semibold">
+                                                    {{ $feature['name'] }}
+                                                </span>
+                                                <span class="text-secondary ms-1">
+                                                    {{ $feature['qty'] ?? 1 }}
+                                                    {{ $feature['unit'] ?? '' }}
+                                                </span>
+                                            </div>
+                                        @empty
+                                            <span class="text-muted">
+                                                Tidak ada perlengkapan tambahan.
+                                            </span>
+                                        @endforelse
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-2">
                                     <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt me-1"></i> Alamat Penjemputan / Pengiriman</small>
                                     <span class="text-dark d-block" style="font-size: 13px;">{{ $booking->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</span>
                                 </div>

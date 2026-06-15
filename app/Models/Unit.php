@@ -12,4 +12,9 @@ class Unit extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function features()
+    {
+        return $this->hasMany(Feature::class, 'unit_id');
+    }
 }

@@ -96,6 +96,28 @@
                                                         <div class="modal-body text-center">
                                                             <div class="row text-start bg-light rounded p-2 mb-3 mx-0">
                                                                 <div class="col-12 mb-2">
+                                                                    <small class="text-muted d-block mb-1">
+                                                                        <i class="bi bi-wrench me-1"></i>
+                                                                        Perlengkapan Kendaraan
+                                                                    </small>
+
+                                                                    @if(!empty($b->features_snapshot) && count($b->features_snapshot))
+                                                                        <div class="d-flex flex-wrap gap-1">
+                                                                            @foreach($b->features_snapshot as $feature)
+                                                                                <span class="badge bg-info-subtle text-info-emphasis border">
+                                                                                    {{ $feature['name'] ?? '-' }}
+                                                                                    {{ $feature['qty'] ?? 1 }}
+                                                                                    {{ $feature['unit'] ?? '' }}
+                                                                                </span>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    @else
+                                                                        <small class="text-dark" style="font-size:13px;">
+                                                                            Tidak ada data perlengkapan.
+                                                                        </small>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="col-12 mb-2">
                                                                     <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt me-1"></i> Alamat Penjemputan / Pengiriman</small>
                                                                     <span class="text-dark d-block" style="font-size: 13px;">{{ $b->pickup_address ?: 'Tidak ada alamat tambahan yang diisi.' }}</span>
                                                                 </div>

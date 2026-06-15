@@ -27,7 +27,21 @@ class Booking extends Model
         'payment_notes',
         'pickup_address',
         'notes',
+        'features_snapshot',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'booking_date' => 'datetime',
+            'rent_start' => 'datetime',
+            'rent_end' => 'datetime',
+            'price_per_day' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'total_amount' => 'decimal:2',
+            'features_snapshot' => 'array',
+        ];
+    }
 
     public function getBookingStatusLabelAttribute() //accessor untuk mendapatkan label status booking
     {

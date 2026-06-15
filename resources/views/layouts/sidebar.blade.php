@@ -46,6 +46,12 @@
              </a>
          </li>
          <li class="nav-item">
+             <a class="nav nav-link {{ request()->routeIs('vehicle-feature.index') ? 'active' : '' }}"
+                 href="{{ route('vehicle-feature.index') }}">
+                 <i class="bi bi-wrench"></i><span>Perlengkapan Kendaraan</span>
+             </a>
+         </li>
+         <li class="nav-item">
              <a class="nav nav-link {{ request()->routeIs('customers.index') ? 'active' : '' }}"
                  href="{{ route('customers.index') }}">
                  <i class="bi bi-people"></i><span>Customers</span>
