@@ -72,7 +72,7 @@
                                                     <div class="input-group-text" id="inputGroupPrepend">
                                                         <span class="bi-telephone"></span>
                                                     </div>
-                                                    <input type="text" name="no_telp" class="form-control"
+                                                    <input type="number" name="no_telp" class="form-control"
                                                         value="{{ old('no_telp') }}" placeholder="No Telepon">
                                                     <div class="invalid-feedback">Please enter your number!</div>
                                                 </div>
